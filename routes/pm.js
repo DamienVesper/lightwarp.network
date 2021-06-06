@@ -69,7 +69,7 @@ router.post(`/prioritymessage`, async (req, res) => {
                 prioritymessage: req.body.prioritymessage,
                 complete: false
             })
-            console.log(transactions)
+            console.log(`NEW PAYMENT INITIALIZED (ID: ${payment.id}) From: ${req.body.fromname}. With Message: ${req.body.prioritymessage}`)
             for(let i = 0;i < payment.links.length;i++){
                 if(payment.links[i].rel === 'approval_url'){
                 res.redirect(payment.links[i].href);
@@ -103,8 +103,8 @@ router.get(`/prioritymessage/success`, async (req, res) => {
                 .setTitle(transactionData.name)
                 .setAuthor(`Priority Message`, `https://store.lightwarp.network/assets/img/logo.jpg`, `https://${process.env.APP_DOMAIN}/prioritymessage`)
                 .setDescription(transactionData.prioritymessage)
-            console.log(transactions);
             client.channels.cache.get(process.env.MESSAGE_CHANNEL_ID).send(embed);
+            console.log(`Transaction "${transactionData.id}" Completed.`)
             transactions.splice(transactions.indexOf(transactionData), 1);
             res.redirect('/prioritymessage/thankyou');
         }
