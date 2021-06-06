@@ -1,0 +1,33 @@
+<%- include('./partials/header'); %>
+<br>
+<h1 class="text-center text-light">Buy Priority Message</h1>
+<div class="row mt-5">
+    <div class="col-md-6 m-auto">
+        <div class="card card-body" style="background-color: #b1cbe6;">
+            <form action="/prioritymessage" method="post" id="prioritymessage-form">
+                <div class="form-group">
+                    <label for="from-title">From Name</label>
+                    <input type="text" id="from-title" name="from-title" class="form-control"
+                        placeholder="Enter your name" maxlength="74">
+                    <br>
+                    <label for="priority-message">Stream Description</label>
+                    <textarea type="text" id="priority-message" name="priority-message"
+                        placeholder="Enter your message" class="form-control"></textarea>
+                    <br>
+                    <label for="donation-link">Email (Optional, for invoice)</label>
+                    <input type="text" id="donation-link" name="donation-link" class="form-control"
+                        placeholder="Enter a URL to your donation page">
+                    <br>
+                    <input type="submit" id="buy-now-button" value="Buy Priority Message (3$)"
+                        class="btn btn-primary btn-block">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    let form  = document.getElementById('prioritymessage-form');
+    form.addEventListener('submit', (e) => {
+        document.getElementById(`buy-now-button`).disabled = true
+    });
+</script>
