@@ -6,6 +6,9 @@ const router = express.Router();
 
 const paypal = require(`paypal-rest-sdk`);
 
+const Discord = require('discord.js');
+const client = new Discord.Client();
+
 // Active Transactions
 let transactions = [];
 
@@ -14,6 +17,10 @@ paypal.configure({
     mode: 'sandbox', //sandbox or live
     client_id: process.env.PAYPAL_CLIENT_ID,
     client_secret: process.env.PAYPAL_CLIENT_SECRET
+});
+
+client.on('ready', () => {
+    console.log(`Logged in to Discord as ${client.user.tag}!`);
 });
 
 router.get(`/prioritymessage`, async (req, res) => {res.render(`pm`)});
@@ -93,10 +100,13 @@ router.get(`/prioritymessage/success`, async (req, res) => {
             const transactionData = transactions.find(transaction => transaction.id === payment.id)
             transactionData.complete = true;
             console.log(transactions);
+            client.channels.cache.get(process.env.MESSAGE_CHANNEL_ID).send(`**FROM:** ${transactionData.name} **MESSAGE:** ${transactionData.prioritymessage}`)
             transactions.splice(transactions.indexOf(transactionData), 1);
             res.redirect('/prioritymessage/thankyou');
         }
     });
 })
+
+client.login(process.env.DISCORD_TOKEN);
 
 module.exports = router;
