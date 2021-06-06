@@ -5,55 +5,24 @@ var cors = require(`cors`)
 const router = express.Router();
 
 const paypal = require(`paypal-rest-sdk`);
-const nodemailer = require(`nodemailer`);
 
-// Nodemailer Configuration.
-const transport = nodemailer.createTransport({
-    host: `localhost`,
-    port: 25,
-    secure: false,
-    auth: {
-        user: process.env.SMTP_USERNAME,
-        password: process.env.SMTP_TOKEN
-    },
-    tls: {
-        rejectUnauthorized: false
-    }
-});
-
-const mailOptions = {
-    from: `LightWarp Priority Messages <prioritymessages@lightwarp.network>`,
-    to: `godofinsanity2000@gmail.com`,
-    subject: `Test`,
-    text: `Test`
-};
-
-transport.sendMail(mailOptions, err => {
-    if (err) {
-        user.delete();
-        return res.json({
-            errors: `Error sending a verification email to the specified email address.`
-        });
-    }
-});
+// Active Transactions
+let transactions = [];
 
 // Paypal Configuration.
 paypal.configure({
-    mode: 'live', //sandbox or live
+    mode: 'sandbox', //sandbox or live
     client_id: process.env.PAYPAL_CLIENT_ID,
     client_secret: process.env.PAYPAL_CLIENT_SECRET
 });
 
-router.get(`/prioritymessage`, async (req, res) => {res.render(`prioritymessage`)});
+router.get(`/prioritymessage`, async (req, res) => {res.render(`pm`)});
 
 router.get('/prioritymessage/cancel', (req, res) => res.send('Cancelled'));
 
 router.post(`/prioritymessage`, async (req, res) => {
-    res.set({
-        "Access-Control-Allow-Headers" : "Origin, Content-Type, Accept, Authorization, X- Request-With",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
-    })
+    if (!req.body.fromname || !req.body.prioritymessage) return res.json({ errors: `Please fill the required fields` });
+    console.log(req.body)
     const payment = {
         intent: "sale",
         payer: {
@@ -84,6 +53,14 @@ router.post(`/prioritymessage`, async (req, res) => {
         if (error) {
             throw error;
         } else {
+            console.log(payment)
+            transactions.push({
+                id: payment.id,
+                name: req.body.fromname,
+                prioritymessage: req.body.prioritymessage,
+                complete: false
+            })
+            console.log(transactions)
             for(let i = 0;i < payment.links.length;i++){
                 if(payment.links[i].rel === 'approval_url'){
                 res.redirect(payment.links[i].href);
@@ -111,7 +88,10 @@ router.get(`/prioritymessage/success`, async (req, res) => {
             console.log(error.response);
             throw error;
         } else {
-            console.log(JSON.stringify(payment));
+            const transactionData = transactions.find(transaction => transaction.id === payment.id)
+            transactionData.complete = true;
+            console.log(transactions);
+            transactions.splice(transactions.indexOf(transactionData), 1);
             res.send('Success');
         }
     });

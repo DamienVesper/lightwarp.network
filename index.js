@@ -2,18 +2,25 @@ require(`dotenv`).config();
 
 // Packages
 const express = require(`express`);
-const cors = require(`cors`)
-const path = require(`path`)
+const cors = require(`cors`);
+const path = require(`path`);
 const ejsLayouts = require(`express-ejs-layouts`);
-const log = require(`./utils/log.js`)
+const log = require(`./utils/log.js`);
 
 // Express Initialization 
 
 const app = express();
 
+// NGINX Proxy.
+app.set(`trust proxy`, true);
+
 // Set view engine.
 app.set(`views`, path.resolve(__dirname, `views`));
 app.set(`view engine`, `ejs`);
+
+// Express extension configurations.
+app.use(express.json({ limit: `5mb` }));
+app.use(express.urlencoded({ limit: `5mb`, extended: true }));
 
 // Serve the static directory.
 app.use(express.static(path.resolve(__dirname, `./client`)));
