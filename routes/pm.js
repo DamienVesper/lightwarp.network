@@ -18,6 +18,8 @@ paypal.configure({
 
 router.get(`/prioritymessage`, async (req, res) => {res.render(`pm`)});
 
+router.get(`/prioritymessage/thankyou`, async (req, res) => {res.render(`success`)});
+
 router.get('/prioritymessage/cancel', (req, res) => res.send('Cancelled'));
 
 router.post(`/prioritymessage`, async (req, res) => {
@@ -89,10 +91,10 @@ router.get(`/prioritymessage/success`, async (req, res) => {
             throw error;
         } else {
             const transactionData = transactions.find(transaction => transaction.id === payment.id)
-            transactionData.complete == true;
+            transactionData.complete = true;
             console.log(transactions);
             transactions.splice(transactions.indexOf(transactionData), 1);
-            res.render('success');
+            res.redirect('/prioritymessage/thankyou');
         }
     });
 })
