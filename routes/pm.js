@@ -99,8 +99,12 @@ router.get(`/prioritymessage/success`, async (req, res) => {
         } else {
             const transactionData = transactions.find(transaction => transaction.id === payment.id)
             transactionData.complete = true;
+            const embed = new Discord.MessageEmbed()
+                .setTitle(transactionData.name)
+                .setAuthor(`Priority Message`, `https://store.lightwarp.network/assets/img/logo.jpg`, `https://${process.env.APP_DOMAIN}/prioritymessage`)
+                .setDescription(transactionData.prioritymessage)
             console.log(transactions);
-            client.channels.cache.get(process.env.MESSAGE_CHANNEL_ID).send(`**FROM:** ${transactionData.name} **MESSAGE:** ${transactionData.prioritymessage}`)
+            client.channels.cache.get(process.env.MESSAGE_CHANNEL_ID).send(embed);
             transactions.splice(transactions.indexOf(transactionData), 1);
             res.redirect('/prioritymessage/thankyou');
         }
