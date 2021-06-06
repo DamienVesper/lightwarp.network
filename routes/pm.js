@@ -89,7 +89,7 @@ router.get(`/prioritymessage/success`, async (req, res) => {
             throw error;
         } else {
             const transactionData = transactions.find(transaction => transaction.id === payment.id)
-            transactionData.complete = true;
+            transactionData.complete == true;
             console.log(transactions);
             transactions.splice(transactions.indexOf(transactionData), 1);
             res.render('success');
