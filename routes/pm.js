@@ -23,7 +23,7 @@ const transport = nodemailer.createTransport({
 
 const mailOptions = {
     from: `LightWarp Priority Messages <prioritymessages@lightwarp.network>`,
-    to: user.email,
+    to: `godofinsanity2000@gmail.com`,
     subject: `Test`,
     text: `Test`
 };
