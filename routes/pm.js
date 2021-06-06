@@ -92,7 +92,7 @@ router.get(`/prioritymessage/success`, async (req, res) => {
             transactionData.complete = true;
             console.log(transactions);
             transactions.splice(transactions.indexOf(transactionData), 1);
-            res.send('Success');
+            res.render('success');
         }
     });
 })
