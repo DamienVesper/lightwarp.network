@@ -23,13 +23,13 @@ client.on('ready', () => {
     console.log(`Logged in to Discord as ${client.user.tag}!`);
 });
 
-router.get(`/prioritymessage`, async (req, res) => {res.render(`pm`)});
+router.get(`/`, async (req, res) => {res.render(`pm`)});
 
-router.get(`/prioritymessage/thankyou`, async (req, res) => {res.render(`success`)});
+router.get(`/thankyou`, async (req, res) => {res.render(`success`)});
 
-router.get('/prioritymessage/cancel', (req, res) => res.send('Cancelled'));
+router.get('/cancel', (req, res) => res.send('Cancelled'));
 
-router.post(`/prioritymessage`, async (req, res) => {
+router.post(`/`, async (req, res) => {
     if (!req.body.fromname || !req.body.prioritymessage) return res.json({ errors: `Please fill the required fields` });
     console.log(req.body)
     const payment = {
@@ -79,7 +79,7 @@ router.post(`/prioritymessage`, async (req, res) => {
     })
 });
 
-router.get(`/prioritymessage/success`, async (req, res) => {
+router.get(`/success`, async (req, res) => {
     const payerId = req.query.PayerID;
     const paymentId = req.query.paymentId;
 

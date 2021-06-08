@@ -141,3 +141,10 @@ input:checked + .slider:before {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.center-image {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+  }

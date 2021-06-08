@@ -32,9 +32,11 @@ app.use(ejsLayouts);
 // Routes
 const indexRouter = require(`./routes/index.js`)
 const pmRouter = require(`./routes/pm.js`)
+const listenRouter = require(`./routes/listen.js`)
 
 app.use(`/`, indexRouter);
-app.use(`/`, cors(), pmRouter);
+app.use(`/prioritymessage`, cors(), pmRouter);
+app.use(`/listen`, listenRouter);
 
 app.listen(process.env.PORT)
 log(`green`, `Server Started on ${process.env.PORT}`)
