@@ -1,0 +1,11 @@
+<link rel="stylesheet" href="/assets/css/widget.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
+<div class="tts-wrapper"></div>
+
+<script>
+    const socket = io.connect(`https://sockets.lightwarp.network`, {
+        secure: true,
+        rejectUnauthorized: true,
+        withCredentials: true
+    });
+</script>

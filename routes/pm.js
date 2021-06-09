@@ -10,7 +10,23 @@ const Discord = require(`discord.js`);
 const gTTS = require(`gtts`);
 const fs = require(`fs`);
 const { Console } = require("console");
+const http = require(`http`);
 const client = new Discord.Client();
+
+const log = require(`../utils/log.js`);
+
+const server = http.createServer(router);
+const { Server } = require("socket.io");
+
+const io = new Server(server);
+
+server.listen(4550, () => {
+    log(`magenta`, `Socket.IO listening on Port 4550`);
+});
+
+io.on(`connection`, async (socket) => {
+    log(`yellow`, `Chat Connection | IP: ${socket.handshake.address}.`);
+})
 
 // Active Transactions
 let transactions = [];
@@ -38,7 +54,6 @@ router.get('/cancel', (req, res) => res.send('Cancelled'));
 
 router.post(`/`, async (req, res) => {
     if (!req.body.fromname || !req.body.prioritymessage) return res.json({ errors: `Please fill the required fields` });
-    console.log(req.body)
     const payment = {
         intent: "sale",
         payer: {
@@ -75,7 +90,7 @@ router.post(`/`, async (req, res) => {
                 prioritymessage: req.body.prioritymessage,
                 complete: false
             })
-            console.log(`NEW PAYMENT INITIALIZED (ID: ${payment.id}) From: ${req.body.fromname}. With Message: ${req.body.prioritymessage}`)
+            log(`yellow`, `NEW PAYMENT INITIALIZED (ID: ${payment.id}) From: ${req.body.fromname}. With Message: ${req.body.prioritymessage}`)
             for(let i = 0;i < payment.links.length;i++){
                 if(payment.links[i].rel === 'approval_url'){
                 res.redirect(payment.links[i].href);
@@ -110,7 +125,7 @@ router.get(`/success`, async (req, res) => {
                 .setAuthor(`Priority Message`, `https://store.lightwarp.network/assets/img/logo.jpg`, `https://${process.env.APP_DOMAIN}/prioritymessage`)
                 .setDescription(transactionData.prioritymessage)
             client.channels.cache.get(process.env.MESSAGE_CHANNEL_ID).send(embed);
-            console.log(`Transaction "${transactionData.id}" Completed.`)
+            log(`green`, `Transaction "${transactionData.id}" Completed.`)
             transactions.splice(transactions.indexOf(transactionData), 1);
             res.redirect('/prioritymessage/thankyou');
         }
