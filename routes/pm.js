@@ -6,22 +6,48 @@ const router = express.Router();
 
 const paypal = require(`paypal-rest-sdk`);
 
-const Discord = require('discord.js');
+const Discord = require(`discord.js`);
+const gTTS = require(`gtts`);
+const fs = require(`fs`);
+const { Console } = require("console");
 const client = new Discord.Client();
 
 // Active Transactions
 let transactions = [];
 
 // Paypal Configuration.
-paypal.configure({
-    mode: 'live', //sandbox or live
-    client_id: process.env.PAYPAL_CLIENT_ID,
-    client_secret: process.env.PAYPAL_CLIENT_SECRET
-});
+if (process.env.ENV === `dev`) {
+    paypal.configure({
+        mode: process.env.PAYPAL_ENV_SANDBOX, //sandbox or live
+        client_id: process.env.PAYPAL_CLIENT_ID_SANDBOX,
+        client_secret: process.env.PAYPAL_CLIENT_SECRET_SANDBOX
+    });
+} else {
+    paypal.configure({
+        mode: process.env.PAYPAL_ENV_LIVE, //sandbox or live
+        client_id: process.env.PAYPAL_CLIENT_ID,
+        client_secret: process.env.PAYPAL_CLIENT_SECRET
+    });
+}
 
-client.on('ready', () => {
-    console.log(`Logged in to Discord as ${client.user.tag}!`);
-});
+saytts(`Nigger`, `coontown`)
+async function saytts(name, message) {
+    client.on(`ready`, async () => {
+        console.log(`Logged in to Discord as ${client.user.tag}!`);
+        const channel = client.channels.cache.get(process.env.VOICE_CHANNEL)
+        const connection = await channel.join();
+        const gtts = new gTTS(`Priority Message from ${name} for 3 Dollars. ${message}`, 'en-us');
+        gtts.save('output.mp3', function (err, result){
+            if(err) { throw new Error(err); }
+        });
+        connection.play(fs.createReadStream(`output.mp3`), { volume: 0.5 })
+        .on(`finish`, async () => {
+            fs.unlinkSync(`output.mp3`)
+        })
+        console.log(`Test`)
+    })
+}
+
 
 router.get(`/`, async (req, res) => {res.render(`pm`)});
 
@@ -38,8 +64,8 @@ router.post(`/`, async (req, res) => {
             payment_method: "paypal"
         },
         redirect_urls: {
-            return_url: `https://${process.env.APP_DOMAIN}/prioritymessage/success`,
-            cancel_url: `https://${process.env.APP_DOMAIN}/prioritymessage/cancel`
+            return_url: `http://${process.env.APP_DOMAIN}/prioritymessage/success`,
+            cancel_url: `http://${process.env.APP_DOMAIN}/prioritymessage/cancel`
         },
         transactions: [{
             item_list: {
@@ -62,7 +88,6 @@ router.post(`/`, async (req, res) => {
         if (error) {
             throw error;
         } else {
-            console.log(payment)
             transactions.push({
                 id: payment.id,
                 name: req.body.fromname,
@@ -104,6 +129,7 @@ router.get(`/success`, async (req, res) => {
                 .setAuthor(`Priority Message`, `https://store.lightwarp.network/assets/img/logo.jpg`, `https://${process.env.APP_DOMAIN}/prioritymessage`)
                 .setDescription(transactionData.prioritymessage)
             client.channels.cache.get(process.env.MESSAGE_CHANNEL_ID).send(embed);
+            saytts(transactionData.name, transactionData.prioritymessage);
             console.log(`Transaction "${transactionData.id}" Completed.`)
             transactions.splice(transactions.indexOf(transactionData), 1);
             res.redirect('/prioritymessage/thankyou');
