@@ -73,8 +73,8 @@ router.post(`/`, async (req, res) => {
             payment_method: "paypal"
         },
         redirect_urls: {
-            return_url: `http://${process.env.APP_DOMAIN}${process.env.WEB_PORT}/prioritymessage/success`,
-            cancel_url: `http://${process.env.APP_DOMAIN}${process.env.WEB_PORT}/prioritymessage/cancel`
+            return_url: `http://${process.env.APP_DOMAIN}:${process.env.WEB_PORT}/prioritymessage/success`,
+            cancel_url: `http://${process.env.APP_DOMAIN}:${process.env.WEB_PORT}/prioritymessage/cancel`
         },
         transactions: [{
             item_list: {
