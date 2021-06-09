@@ -20,7 +20,7 @@ const { Server } = require("socket.io");
 
 const io = new Server(server, {
     cors: {
-        origin: process.env.ENV === `prod` ? `http://localhost:8081` : `https://sockets.lightwarp.network`,
+        origin: process.env.ENV === `dev` ? `http://localhost:8081` : `https://sockets.lightwarp.network`,
         methods: [`GET`, `POST`],
         credentials: true
     }
