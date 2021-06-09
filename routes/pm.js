@@ -15,7 +15,7 @@ const client = new Discord.Client();
 
 const log = require(`../utils/log.js`);
 
-const server = http.createServer(router);
+const server = http.createServer();
 const { Server } = require("socket.io");
 
 const io = new Server(server);
