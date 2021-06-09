@@ -30,25 +30,6 @@ if (process.env.ENV === `dev`) {
     });
 }
 
-saytts(`Nigger`, `coontown`)
-async function saytts(name, message) {
-    client.on(`ready`, async () => {
-        console.log(`Logged in to Discord as ${client.user.tag}!`);
-        const channel = client.channels.cache.get(process.env.VOICE_CHANNEL)
-        const connection = await channel.join();
-        const gtts = new gTTS(`Priority Message from ${name} for 3 Dollars. ${message}`, 'en-us');
-        gtts.save('output.mp3', function (err, result){
-            if(err) { throw new Error(err); }
-        });
-        connection.play(fs.createReadStream(`output.mp3`), { volume: 0.5 })
-        .on(`finish`, async () => {
-            fs.unlinkSync(`output.mp3`)
-        })
-        console.log(`Test`)
-    })
-}
-
-
 router.get(`/`, async (req, res) => {res.render(`pm`)});
 
 router.get(`/thankyou`, async (req, res) => {res.render(`success`)});
@@ -129,7 +110,6 @@ router.get(`/success`, async (req, res) => {
                 .setAuthor(`Priority Message`, `https://store.lightwarp.network/assets/img/logo.jpg`, `https://${process.env.APP_DOMAIN}/prioritymessage`)
                 .setDescription(transactionData.prioritymessage)
             client.channels.cache.get(process.env.MESSAGE_CHANNEL_ID).send(embed);
-            saytts(transactionData.name, transactionData.prioritymessage);
             console.log(`Transaction "${transactionData.id}" Completed.`)
             transactions.splice(transactions.indexOf(transactionData), 1);
             res.redirect('/prioritymessage/thankyou');
