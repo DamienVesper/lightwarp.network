@@ -10,6 +10,7 @@
         withCredentials: true
     });
     socket.on(`broadcast`, (data) => {
+        const audio = new Audio(`/assets/audio/notification.mp3`)
         console.log(data)
         const speech = new SpeechSynthesisUtterance();
         speech.lang = "en-US";
@@ -17,6 +18,9 @@
         speech.volume = 1;
         speech.rate = 1;
         speech.pitch = 1;
+        setTimeout(() => {
+            audio.play();
+        }, 2000)
         window.speechSynthesis.speak(speech);
     })
 </script>
