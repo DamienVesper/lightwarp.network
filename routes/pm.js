@@ -18,14 +18,21 @@ const log = require(`../utils/log.js`);
 const server = http.createServer();
 const { Server } = require("socket.io");
 
-const io = new Server(server);
+const io = new Server(server, {
+    cors: {
+        origin: process.env.ENV === `prod` ? `http://localhost:8081` : `https://sockets.lightwarp.network`,
+        methods: [`GET`, `POST`],
+        credentials: true
+    }
+});
 
 server.listen(4550, () => {
     log(`magenta`, `Socket.IO listening on Port 4550`);
 });
 
 io.on(`connection`, async (socket) => {
-    log(`yellow`, `Chat Connection | IP: ${socket.handshake.address}.`);
+    log(`yellow`, `Widget Connection | IP: ${socket.handshake.address}.`);
+    socket.emit(`handshake`)
 })
 
 // Active Transactions

@@ -3,7 +3,8 @@
 <div class="tts-wrapper"></div>
 
 <script>
-    const socket = io.connect(`https://sockets.lightwarp.network`, {
+    const proto = window.location.protocol;
+    const socket = io.connect(`${proto}//${window.location.hostname}:${proto === `http:` ? `4550`: `443`}`, {
         secure: true,
         rejectUnauthorized: true,
         withCredentials: true
