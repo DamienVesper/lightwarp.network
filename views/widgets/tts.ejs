@@ -11,5 +11,12 @@
     });
     socket.on(`broadcast`, (data) => {
         console.log(data)
+        const speech = new SpeechSynthesisUtterance();
+        speech.lang = "en-US";
+        speech.text = `Priority Message from ${data.name} for 3 Dollars. ${data.prioritymessage}`;
+        speech.volume = 1;
+        speech.rate = 1;
+        speech.pitch = 1;
+        window.speechSynthesis.speak(speech);
     })
 </script>
