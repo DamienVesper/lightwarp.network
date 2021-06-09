@@ -4,7 +4,7 @@
 
 <script>
     const proto = window.location.protocol;
-    const socket = io.connect(`${proto}//${window.location.hostname}:${proto === `http:` ? `443`: `4550`}`, {
+    const socket = io.connect(`${proto}//<%=webfront%>:${proto === `http:` ? `4550`: `443`}`, {
         secure: true,
         rejectUnauthorized: true,
         withCredentials: true
