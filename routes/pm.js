@@ -45,7 +45,13 @@ if (process.env.ENV === `dev`) {
         client_id: process.env.PAYPAL_CLIENT_ID_SANDBOX,
         client_secret: process.env.PAYPAL_CLIENT_SECRET_SANDBOX
     });
-} else {
+} else if (process.env.ENV === `dev-test`) {
+    paypal.configure({
+        mode: process.env.PAYPAL_ENV_SANDBOX, //sandbox or live
+        client_id: process.env.PAYPAL_CLIENT_ID_SANDBOX,
+        client_secret: process.env.PAYPAL_CLIENT_SECRET_SANDBOX
+    });
+} else if (process.env.ENV === `prod`) {
     paypal.configure({
         mode: process.env.PAYPAL_ENV_LIVE, //sandbox or live
         client_id: process.env.PAYPAL_CLIENT_ID,
@@ -133,6 +139,7 @@ router.get(`/success`, async (req, res) => {
                 .setDescription(transactionData.prioritymessage)
             client.channels.cache.get(process.env.MESSAGE_CHANNEL_ID).send(embed);
             log(`green`, `Transaction "${transactionData.id}" Completed.`)
+            io.sockets.emit(`broadcast`, {name: transactionData.name, prioritymessage: transactionData.prioritymessage})
             transactions.splice(transactions.indexOf(transactionData), 1);
             res.redirect('/prioritymessage/thankyou');
         }
