@@ -6,9 +6,9 @@
   "author": "LightWarp",
   "license": "MIT",
   "scripts": {
-    "prod": "cross-env NODE_ENV=\"prod\" node index.js",
-    "dev": "cross-env NODE_ENV=\"dev\" nodemon index.js",
-    "daemon": "cross-env NODE_ENV=\"prod\" forever start index.js"
+    "prod": "cross-env ENV=\"prod\" node index.js",
+    "dev": "cross-env ENV=\"dev\" nodemon index.js",
+    "daemon": "cross-env ENV=\"prod\" forever start index.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
