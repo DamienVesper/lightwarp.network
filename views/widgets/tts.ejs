@@ -18,9 +18,9 @@
         speech.volume = 1;
         speech.rate = 1;
         speech.pitch = 1;
+        audio.play();
         setTimeout(() => {
-            audio.play();
+            window.speechSynthesis.speak(speech);
         }, 2000)
-        window.speechSynthesis.speak(speech);
     })
 </script>
