@@ -6,10 +6,10 @@
   "author": "LightWarp",
   "license": "MIT",
   "scripts": {
-    "prod": "cross-env ENV=\"prod\" APP_DOMAIN=\"lightwarp.network\" node index.js",
-    "dev": "cross-env ENV=\"dev\" APP_DOMAIN=\"localhost:8081\" nodemon index.js",
-    "dev-test": "cross-env ENV=\"dev\" APP_DOMAIN=\"lightwarp.network\" nodemon index.js",
-    "daemon": "cross-env ENV=\"prod\" APP_DOMAIN=\"lightwarp.network\" forever start index.js"
+    "prod": "cross-env ENV=\"prod\" APP_DOMAIN=\"lightwarp.network\" WEB_PORT=\"80\" node index.js",
+    "dev": "cross-env ENV=\"dev\" APP_DOMAIN=\"localhost\" WEB_PORT=\"8081\" nodemon index.js",
+    "dev-test": "cross-env ENV=\"dev\" APP_DOMAIN=\"lightwarp.network\" WEB_PORT=\"80\" nodemon index.js",
+    "daemon": "cross-env ENV=\"prod\" APP_DOMAIN=\"lightwarp.network\" WEB_PORT=\"8081\" forever start index.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
