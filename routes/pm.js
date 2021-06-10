@@ -57,6 +57,12 @@ if (process.env.ENV === `dev`) {
         client_id: process.env.PAYPAL_CLIENT_ID,
         client_secret: process.env.PAYPAL_CLIENT_SECRET
     });
+} else if (process.env.ENV === `daemon`) {
+    paypal.configure({
+        mode: process.env.PAYPAL_ENV_LIVE, //sandbox or live
+        client_id: process.env.PAYPAL_CLIENT_ID,
+        client_secret: process.env.PAYPAL_CLIENT_SECRET
+    });
 }
 
 router.get(`/`, async (req, res) => {res.render(`pm`)});
@@ -67,6 +73,7 @@ router.get('/cancel', (req, res) => res.send('Cancelled'));
 
 router.post(`/`, async (req, res) => {
     if (!req.body.fromname || !req.body.prioritymessage) return res.json({ errors: `Please fill the required fields` });
+
     const payment = {
         intent: "sale",
         payer: {
@@ -99,8 +106,8 @@ router.post(`/`, async (req, res) => {
         } else {
             transactions.push({
                 id: payment.id,
-                name: req.body.fromname,
-                prioritymessage: req.body.prioritymessage,
+                name: req.body.fromname.substr(0, 80),
+                prioritymessage: req.body.prioritymessage.substr(0, 300),
                 complete: false
             })
             log(`yellow`, `NEW PAYMENT INITIALIZED (ID: ${payment.id}) From: ${req.body.fromname}. With Message: ${req.body.prioritymessage}`)
