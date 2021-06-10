@@ -30,13 +30,15 @@ app.use(cors());
 app.use(ejsLayouts);
 
 // Routes
-const indexRouter = require(`./routes/index.js`)
-const pmRouter = require(`./routes/pm.js`)
-const listenRouter = require(`./routes/listen.js`)
-const widgetRouter = require(`./routes/widget`)
+const indexRouter = require(`./routes/index.js`);
+const pmRouter = require(`./routes/pm.js`);
+const mediaRouter = require(`./routes/media.js`);
+const listenRouter = require(`./routes/listen.js`);
+const widgetRouter = require(`./routes/widget.js`);
 
 app.use(`/`, indexRouter);
 app.use(`/prioritymessage`, cors(), pmRouter);
+app.use(`/mediashare`, cors(), mediaRouter);
 app.use(`/listen`, listenRouter);
 app.use(`/widget`, widgetRouter);
 

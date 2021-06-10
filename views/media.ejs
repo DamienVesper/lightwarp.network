@@ -1,23 +1,23 @@
 <%- include('./partials/header'); %>
 <br>
-<h1 class="text-center text-light">Buy Priority Message</h1>
+<h1 class="text-center text-light">Buy Media Share</h1>
 <div class="row mt-5">
     <div class="col-md-6 m-auto">
         <div class="card card-body" style="background-color: #b1cbe6;">
-            <form action="/prioritymessage" method="post" name="prioritymessage-form" id="prioritymessage-form">
+            <form action="/mediashare" method="post" name="prioritymessage-form" id="prioritymessage-form">
                 <div class="form-group">
                     <label for="fromname">Your Name</label>
                     <input type="text" id="fromname" name="fromname" class="form-control"
                         placeholder="Enter your name" maxlength="80">
                     <br>
-                    <label for="prioritymessage">Priority Message</label>
-                    <textarea type="text" id="prioritymessage" name="prioritymessage"
-                        placeholder="Enter your message" class="form-control" maxlength="300"></textarea>
+                    <label for="mediashare">Video Link</label>
+                    <input type="text" id="mediashare" name="mediashare"
+                        placeholder="YouTube/BitChute Video Link" class="form-control" maxlength="300"></input>
                     <br>
                     <input type="submit" id="buy-now-button" value="Buy Priority Message with Paypal (3$)"
                         class="btn btn-primary btn-block">
                     <br>
-                    <label>NOTE: Your Priority Message will be read out by the host and/or TTS during intervals.</label>
+                    <label>NOTE: Your Media Share Video will be watched by the host during intervals. The show has the right to not screen your video on stream.</label>
                 </div>
             </form>
         </div>
