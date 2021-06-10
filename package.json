@@ -6,10 +6,10 @@
   "author": "LightWarp",
   "license": "MIT",
   "scripts": {
-    "prod": "cross-env ENV=\"prod\" APP_DOMAIN=\"sockets.lightwarp.network\" URL=\"https://lightwarp.network\" MESSAGE_CHANNEL_ID=\"851087814439206952\" node index.js",
-    "dev": "cross-env ENV=\"dev\" APP_DOMAIN=\"localhost\" URL=\"http://localhost:8081\" MESSAGE_CHANNEL_ID=\"692498168482365570\" nodemon index.js",
-    "dev-test": "cross-env ENV=\"dev\" APP_DOMAIN=\"sockets.lightwarp.network\" URL=\"https://lightwarp.network\" MESSAGE_CHANNEL_ID=\"692498168482365570\" nodemon index.js",
-    "daemon": "cross-env ENV=\"prod\" APP_DOMAIN=\"sockets.lightwarp.network\" URL=\"https://lightwarp.network\" MESSAGE_CHANNEL_ID=\"851087814439206952\" forever start index.js"
+    "prod": "cross-env ENV=\"prod\" APP_DOMAIN=\"sockets.lightwarp.network\" URL=\"https://lightwarp.network\" MESSAGE_CHANNEL_ID=\"852617999658647552\" node index.js",
+    "dev": "cross-env ENV=\"dev\" APP_DOMAIN=\"localhost\" URL=\"http://localhost:8081\" MESSAGE_CHANNEL_ID=\"852612369992646696\" nodemon index.js",
+    "dev-test": "cross-env ENV=\"dev\" APP_DOMAIN=\"sockets.lightwarp.network\" URL=\"https://lightwarp.network\" MESSAGE_CHANNEL_ID=\"852612369992646696\" nodemon index.js",
+    "daemon": "cross-env ENV=\"prod\" APP_DOMAIN=\"sockets.lightwarp.network\" URL=\"https://lightwarp.network\" MESSAGE_CHANNEL_ID=\"852617999658647552\" forever start index.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
