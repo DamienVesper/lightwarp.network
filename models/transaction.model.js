@@ -1,12 +1,12 @@
-const mongoose = require(`mongoose`);
+const Mongoose = require(`mongoose`);
 
-const TransactionSchema = new mongoose.Schema({
+const TransactionSchema = new Mongoose.Schema({
     transactionID: { type: String, required: true },
     name: { type: String, required: true },
     arg: { type: String, required: true },
-    price: {type: String, required: true },
-    paid: {type: Boolean, required: true, default: false }
-}, {timestamps: true, collection: `Transactions`});
+    price: { type: String, required: true },
+    paid: {type: Boolean, required: false, default: false }
+}, { timestamps: true });
 
 const Transaction = mongoose.model(`Transaction`, TransactionSchema);
 
