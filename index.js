@@ -6,10 +6,16 @@ const cors = require(`cors`);
 const path = require(`path`);
 const ejsLayouts = require(`express-ejs-layouts`);
 const log = require(`./utils/log.js`);
+const mongoose = require(`mongoose`);
 
 // Express Initialization 
 
 const app = express();
+
+// MongoDB
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: true }).then(() => {
+    log(`green`, `User authentication has connected to database.`);
+})
 
 // NGINX Proxy.
 app.set(`trust proxy`, true);

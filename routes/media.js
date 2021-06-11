@@ -3,12 +3,9 @@ const router = express.Router();
 const paypal = require(`paypal-rest-sdk`);
 const Discord = require(`discord.js`);
 const client = new Discord.Client();
-
+const Transaction = require(`../models/transaction.js`);
 const log = require(`../utils/log.js`);
 const socket = require(`../socket.js`);
-
-// Active Transactions
-let transactions = [];
 
 // Paypal Configuration.
 if (process.env.ENV === `dev`) {
@@ -76,18 +73,25 @@ router.post(`/`, async (req, res) => {
         if (error) {
             throw error;
         } else {
-            transactions.push({
-                id: payment.id,
-                name: req.body.fromname.substr(0, 80),
-                mediashare: req.body.mediashare.substr(0, 300),
-                complete: false
+            Transaction.findOne({ transactionID:  payment.id}).then(transaction => {
+                if (transaction) return log(`red`, `Transaction already exists.`)
+                const newTransaction = new Transaction({
+                    transactionID: payment.id,
+                    name: req.body.fromname,
+                    arg: req.body.mediashare,
+                    price: `6`
+                })
+                newTransaction.save(err => {
+                    if (err) return log(`red`, err)
+                    log(`yellow`, `Transaction ${payment.id} saved to Database`)
+                    log(`yellow`, `NEW PAYMENT INITIALIZED (ID: ${payment.id}) From: ${req.body.fromname}. With Message: ${req.body.mediashare}`)
+                    for(let i = 0;i < payment.links.length;i++){
+                        if(payment.links[i].rel === 'approval_url'){
+                            res.redirect(payment.links[i].href);
+                        }
+                    }
+                })
             })
-            log(`yellow`, `NEW PAYMENT INITIALIZED (ID: ${payment.id}) From: ${req.body.fromname}. With Message: ${req.body.mediashare}`)
-            for(let i = 0;i < payment.links.length;i++){
-                if(payment.links[i].rel === 'approval_url'){
-                res.redirect(payment.links[i].href);
-                }
-            }
         }
     })
 });
@@ -110,17 +114,25 @@ router.get(`/success`, async (req, res) => {
             console.log(error.response);
             return res.send(`Error in Executing Transaction`)
         } else {
-            const transactionData = transactions.find(transaction => transaction.id === payment.id)
-            transactionData.complete = true;
-            const embed = new Discord.MessageEmbed()
-                .setTitle(transactionData.name)
-                .setAuthor(`Media Share`, `https://lightwarp.network/assets/img/logo.jpg`, `https://${process.env.APP_DOMAIN}/mediashare`)
-                .setDescription(`Video Sent: ${transactionData.mediashare}`)
-            client.channels.cache.get(process.env.MESSAGE_CHANNEL_ID).send(embed);
-            log(`green`, `Transaction "${transactionData.id}" Completed.`)
-            socket(`mediashare`, transactionData.name, transactionData.mediashare);
-            transactions.splice(transactions.indexOf(transactionData), 1);
-            res.redirect('/mediashare/thankyou');
+            Transaction.findOne({
+                transactionID: paymentId
+            }).then(transaction => {
+                if (!transaction) return res.status(404).send(`Error: Transaction does not exist`)
+                if (transaction.paid == true) return res.send(`Transaction ${paymentId} is already Complete`)
+                transaction.paid = true;
+                transaction.save(() => {
+                    log(`green`, `Transaction "${paymentId}" Completed.`)
+                    const embed = new Discord.MessageEmbed()
+                        .setTitle(transaction.name)
+                        .setAuthor(`Media Share`, `https://lightwarp.network/assets/img/logo.jpg`, `https://${process.env.APP_DOMAIN}/mediashare`)
+                        .setDescription(transaction.arg)
+                    if (!process.env.ENV === `dev`) {
+                        client.channels.cache.get(process.env.MESSAGE_CHANNEL_ID).send(embed);
+                    }
+                    socket(`mediashare`, transaction.name, transaction.arg);
+                    res.redirect('/mediashare/thankyou');
+                })
+            })
         }
     });
 })
