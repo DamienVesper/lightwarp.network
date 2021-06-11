@@ -126,9 +126,7 @@ router.get(`/success`, async (req, res) => {
                         .setTitle(transaction.name)
                         .setAuthor(`Media Share`, `https://lightwarp.network/assets/img/logo.jpg`, `https://${process.env.APP_DOMAIN}/mediashare`)
                         .setDescription(transaction.arg)
-                    if (!process.env.ENV === `dev`) {
-                        client.channels.cache.get(process.env.MESSAGE_CHANNEL_ID).send(embed);
-                    }
+                    client.channels.cache.get(process.env.MESSAGE_CHANNEL_ID).send(embed);
                     socket(`mediashare`, transaction.name, transaction.arg);
                     res.redirect('/mediashare/thankyou');
                 })

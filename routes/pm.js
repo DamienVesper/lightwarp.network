@@ -126,9 +126,7 @@ router.get(`/success`, async (req, res) => {
                         .setTitle(transaction.name)
                         .setAuthor(`Priority Message`, `https://lightwarp.network/assets/img/logo.jpg`, `https://${process.env.APP_DOMAIN}/prioritymessage`)
                         .setDescription(transaction.arg)
-                    if (!process.env.ENV === `dev`) {
-                        client.channels.cache.get(process.env.MESSAGE_CHANNEL_ID).send(embed);
-                    }
+                    client.channels.cache.get(process.env.MESSAGE_CHANNEL_ID).send(embed);
                     socket(`prioritymessage`, transaction.name, transaction.arg);
                     res.redirect('/prioritymessage/thankyou');
                 })
