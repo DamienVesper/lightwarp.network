@@ -3,7 +3,7 @@ const router = express.Router();
 const paypal = require(`paypal-rest-sdk`);
 const Discord = require(`discord.js`);
 const client = new Discord.Client();
-const Transaction = require(`../models/transaction.js`);
+const Transaction = require(`../models/transaction.model.js`);
 const log = require(`../utils/log.js`);
 const socket = require(`../socket.js`);
 
