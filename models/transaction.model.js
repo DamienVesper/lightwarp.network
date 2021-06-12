@@ -8,6 +8,6 @@ const TransactionSchema = new Mongoose.Schema({
     paid: {type: Boolean, required: false, default: false }
 }, { timestamps: true });
 
-const Transaction = mongoose.model(`Transaction`, TransactionSchema);
+const Transaction = Mongoose.model(`Transaction`, TransactionSchema);
 
 module.exports = Transaction;
