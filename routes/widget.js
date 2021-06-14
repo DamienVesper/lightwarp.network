@@ -16,7 +16,7 @@ router.post(`/fake`, async (req, res) => {
     const { name, message } = req.body;
     broadcast(`prioritymessage`, name, message);
 
-    res.sendStatus(200).json({ success: `I like em big` });
+    res.json({ success: `I like em big` });
 });
 
 module.exports = router;
