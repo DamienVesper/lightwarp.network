@@ -9,7 +9,7 @@ router.get(`/tts`, async (req, res) => {res.render(`widgets/tts`, {
 })});
 
 router.get(`/fake`, async (req, res) => {
-    res.render(`widgets/tts.ejs`);
+    res.render(`widgets/fake.ejs`);
 });
 
 router.post(`/fake`, async (req, res) => {

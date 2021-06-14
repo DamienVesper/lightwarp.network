@@ -23,13 +23,3 @@
         </div>
     </div>
 </div>
-<script>
-    let form  = document.getElementById('prioritymessage-form');
-    form.addEventListener('submit', (e) => {
-        if (document.forms['prioritymessage-form'].fromname.value === "" || document.forms['prioritymessage-form'].prioritymessage.value === "") {
-            alert("Please fill the required fields")
-            return e.preventDefault();
-        }
-        document.getElementById(`buy-now-button`).disabled = true
-    });
-</script>
