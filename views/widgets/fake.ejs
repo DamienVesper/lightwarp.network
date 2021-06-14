@@ -4,21 +4,20 @@
 <div class="row mt-5">
     <div class="col-md-6 m-auto">
         <div class="card card-body" style="background-color: #b1cbe6;">
-            <form action="/prioritymessage" method="post" name="prioritymessage-form" id="prioritymessage-form">
+            <form action="/widget/fake" method="post" name="fake-message-form" id="fake-message-form">
                 <div class="form-group">
-                    <label for="fromname">Your Name</label>
-                    <input type="text" id="fromname" name="fromname" class="form-control"
+                    <label for="name">Your Name</label>
+                    <input type="text" id="fromname" name="name" class="form-control"
                         placeholder="Enter your name" maxlength="80">
                     <br>
                     <label for="prioritymessage">Priority Message</label>
-                    <textarea type="text" id="prioritymessage" name="prioritymessage"
+                    <textarea type="text" id="message" name="message"
                         placeholder="Enter your message" class="form-control" maxlength="300"></textarea>
                     <br>
-                    <input type="submit" id="buy-now-button" value="Buy Priority Message with Paypal (3$)"
+                    <input type="submit" id="buy-now-button" value="Send Fake Message"
                         class="btn btn-primary btn-block">
                     <br>
                     <label>NOTE: Your Priority Message will be read out by the host and/or TTS during intervals.</label>
-                    <label><strong>DISCLAIMER:</strong> By clicking on the Purchase Button, you agree that all Purchases are FINAL, and non refundable. Any chargebacks will be fought.</label>
                 </div>
             </form>
         </div>
