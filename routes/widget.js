@@ -21,7 +21,7 @@ router.post(`/fake`, async (req, res) => {
     const { name, message } = req.body;
     broadcast(`prioritymessage`, name, message);
 
-    log(`fake priority message from ${name} >>> ${message}.`);
+    log(`green`, `fake priority message from ${name} >>> ${message}.`);
 
     res.redirect(`https://lightwarp.network/widget/fake`);
 });
