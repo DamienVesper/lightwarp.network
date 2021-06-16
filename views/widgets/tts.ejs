@@ -15,6 +15,7 @@
     speech.volume = 1;
     speech.rate = 1;
     speech.pitch = 1;
+
     socket.on(`prioritymessage`, (data) => {
         console.log(data)
         speech.text = `Priority Message from ${data.name} for 3 Dollars. ${data.arg}`;
@@ -22,7 +23,8 @@
         setTimeout(() => {
             window.speechSynthesis.speak(speech);
         }, 2000)
-    })
+    });
+
     socket.on(`mediashare`, (data) => {
         console.log(data)
         speech.text = `Recieved Media Share from: ${data.name}, for 6 Dollars.`;
@@ -30,5 +32,7 @@
         setTimeout(() => {
             window.speechSynthesis.speak(speech);
         }, 2000)
-    })
+    });
+
+    socket.on(`clearall`, () => window.reload());
 </script>
