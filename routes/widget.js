@@ -3,7 +3,7 @@ const express = require(`express`);
 const router = express.Router();
 
 const broadcast = require(`../socket.js`);
-const log = require(`./utils/log.js`);
+const log = require(`../utils/log.js`);
 
 router.get(`/tts`, async (req, res) => {res.render(`widgets/tts`, {
     webfront: process.env.APP_DOMAIN
