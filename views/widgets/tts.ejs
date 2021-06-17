@@ -9,29 +9,49 @@
         rejectUnauthorized: true,
         withCredentials: true
     });
-    const audio = new Audio(`/assets/audio/notification.mp3`)
+    let isPlaying = false;
+    let messages = [];
+    const audio = new Audio(`/assets/audio/notification.mp3`);
     const speech = new SpeechSynthesisUtterance();
     speech.lang = "en-US";
     speech.volume = 1;
     speech.rate = 1;
     speech.pitch = 1;
 
-    socket.on(`prioritymessage`, (data) => {
+    const playMessage = async (message) => {
+        speech.text = message;
+        console.log(`Start`)
+        isPlaying = true;
+        audio.currentTime = 0;
+        await audio.play();
+        setTimeout(async () => {
+            await window.speechSynthesis.speak(speech);
+        }, 2000);
+        speech.onend = async () => {
+            console.log(`Done`)
+            messages.shift()
+            isPlaying = false;
+        }
+    }
+
+    setInterval(async () => {
+        if (messages.length > 0) {
+            if (!isPlaying) {
+                playMessage(messages[0]);
+            }
+        }
+    }, 2000)
+
+    socket.on(`prioritymessage`, async (data) => {
         console.log(data)
-        speech.text = `Priority Message from ${data.name} for 3 Dollars. ${data.arg}`;
-        audio.play();
-        setTimeout(() => {
-            window.speechSynthesis.speak(speech);
-        }, 2000)
+        const message = `Priority Message from ${data.name} for 3 Dollars. ${data.arg}`;
+        messages.push(message)
     });
 
-    socket.on(`mediashare`, (data) => {
+    socket.on(`mediashare`, async (data) => {
         console.log(data)
-        speech.text = `Recieved Media Share from: ${data.name}, for 6 Dollars.`;
-        audio.play();
-        setTimeout(() => {
-            window.speechSynthesis.speak(speech);
-        }, 2000)
+        const message = `Recieved Media Share from: ${data.name}, for 6 Dollars.`;
+        messages.push(message)
     });
 
     socket.on(`clearall`, () => window.location.reload());

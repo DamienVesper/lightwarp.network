@@ -23,12 +23,20 @@ router.post(`/fake`, async (req, res) => {
 
     log(`green`, `fake priority message from ${name} >>> ${message}.`);
 
-    res.redirect(`https://lightwarp.network/widget/fake`);
+    if (process.env.ENV === `dev`) {
+        res.redirect(`http://localhost:8081/widget/fake`);
+    } else {
+        res.status(403).send(`Unauthorized`);
+    }
 });
 
 router.post(`/bye`, async (req, res) => {
     broadcast(`clearall`);
-    res.redirect(`https://lightwarp.network/widget/bye`);
+    if (process.env.ENV === `dev`) {
+        res.redirect(`http://localhost:8081/widget/bye`);
+    } else {
+        res.status(403).send(`Unauthorized`);
+    }
 });
 
 module.exports = router;
