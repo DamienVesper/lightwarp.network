@@ -8,6 +8,11 @@ const ejsLayouts = require(`express-ejs-layouts`);
 const log = require(`./utils/log.js`);
 const mongoose = require(`mongoose`);
 
+// Settings DB
+const settings = require(`./utils/settings.js`)
+
+settings();
+
 // Express Initialization 
 
 const app = express();
@@ -37,16 +42,21 @@ app.use(ejsLayouts);
 
 // Routes
 const indexRouter = require(`./routes/index.js`);
+const apiRouter = require(`./routes/api.js`);
 const pmRouter = require(`./routes/pm.js`);
 const mediaRouter = require(`./routes/media.js`);
 const listenRouter = require(`./routes/listen.js`);
 const widgetRouter = require(`./routes/widget.js`);
 
 app.use(`/`, indexRouter);
+app.use(`/api`, apiRouter);
 app.use(`/prioritymessage`, cors(), pmRouter);
 app.use(`/mediashare`, cors(), mediaRouter);
 app.use(`/listen`, listenRouter);
 app.use(`/widget`, widgetRouter);
+
+// Discord
+require(`./discord`)
 
 app.listen(process.env.PORT)
 log(`magenta`, `Webserver Started on ${process.env.PORT}`)

@@ -10,25 +10,25 @@ const socket = require(`../socket.js`)
 // Paypal Configuration.
 if (process.env.ENV === `dev`) {
     paypal.configure({
-        mode: process.env.PAYPAL_ENV_SANDBOX, //sandbox or live
+        mode: process.env.PAYPAL_ENV_SANDBOX,
         client_id: process.env.PAYPAL_CLIENT_ID_SANDBOX,
         client_secret: process.env.PAYPAL_CLIENT_SECRET_SANDBOX
     });
 } else if (process.env.ENV === `dev-test`) {
     paypal.configure({
-        mode: process.env.PAYPAL_ENV_SANDBOX, //sandbox or live
+        mode: process.env.PAYPAL_ENV_SANDBOX,
         client_id: process.env.PAYPAL_CLIENT_ID_SANDBOX,
         client_secret: process.env.PAYPAL_CLIENT_SECRET_SANDBOX
     });
 } else if (process.env.ENV === `prod`) {
     paypal.configure({
-        mode: process.env.PAYPAL_ENV_LIVE, //sandbox or live
+        mode: process.env.PAYPAL_ENV_LIVE,
         client_id: process.env.PAYPAL_CLIENT_ID,
         client_secret: process.env.PAYPAL_CLIENT_SECRET
     });
 } else if (process.env.ENV === `daemon`) {
     paypal.configure({
-        mode: process.env.PAYPAL_ENV_LIVE, //sandbox or live
+        mode: process.env.PAYPAL_ENV_LIVE, 
         client_id: process.env.PAYPAL_CLIENT_ID,
         client_secret: process.env.PAYPAL_CLIENT_SECRET
     });

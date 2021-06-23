@@ -26,7 +26,7 @@ router.post(`/fake`, async (req, res) => {
     if (process.env.ENV === `dev`) {
         res.redirect(`http://localhost:8081/widget/fake`);
     } else {
-        res.status(403).send(`Unauthorized`);
+        res.status(401).send(`Unauthorized`);
     }
 });
 
@@ -35,7 +35,7 @@ router.post(`/bye`, async (req, res) => {
     if (process.env.ENV === `dev`) {
         res.redirect(`http://localhost:8081/widget/bye`);
     } else {
-        res.status(403).send(`Unauthorized`);
+        res.status(401).send(`Unauthorized`);
     }
 });
 
