@@ -1,7 +1,7 @@
 const Settings = require(`../../models/settings.model`)
 module.exports.run = async (client, message, args) =>{
     if (!args.length > 0) return await message.reply(`:x: NO PARAMS - Usage: \`${process.env.DISCORD_PREFIX}pm <start|stop>\` `)
-    if (!message.author.hasPermission([`ADMINISTRATOR`])) return message.reply(`:no_entry: You do not have permission to do this.`)
+    if (!message.member.hasPermission([`ADMINISTRATOR`])) return message.reply(`:no_entry: You do not have permission to do this.`)
     const settings = await Settings.findOne({ id: `settings` });
     switch (args[0]) {
         case `start`:
