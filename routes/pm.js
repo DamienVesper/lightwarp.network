@@ -212,10 +212,10 @@ router.post(`/success/btc`, async (req, res) => {
         transactionID: req.body.custom
     }).then(transaction => {
         if (!transaction) return res.status(404).send(`Error: Transaction does not exist`)
-        if (transaction.paid == true) return res.send(`Transaction ${paymentId} is already Complete`)
+        if (transaction.paid == true) return res.send(`Transaction ${req.body.custom} is already Complete`)
         transaction.paid = true;
         transaction.save(() => {
-            log(`green`, `Transaction "${paymentId}" Completed.`)
+            log(`green`, `Transaction "${req.body.customreq.body.custom}" Completed.`)
             const embed = new Discord.MessageEmbed()
                 .setTitle(transaction.name)
                 .setAuthor(`Priority Message`, `https://lightwarp.network/assets/img/logo.jpg`, `https://${process.env.APP_DOMAIN}/prioritymessage`)
