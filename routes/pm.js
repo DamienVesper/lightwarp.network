@@ -53,7 +53,7 @@ router.get('/cancel', (req, res) => res.send('Cancelled'));
 
 router.post(`/`, async (req, res) => {
     if (!req.body.fromname || !req.body.prioritymessage || !req.body.amount) return res.json({ errors: `Please fill the required fields` });
-    if (req.body.amount >= 3) return res.json({ errors: `Below minimum amount.` })
+    if (req.body.amount <= 3) return res.json({ errors: `Below minimum amount.` })
     console.log(req.body.currency);
     console.log(req.body.amount);
     if (req.body.currency === `paypal`) {
