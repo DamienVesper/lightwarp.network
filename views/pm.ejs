@@ -12,7 +12,7 @@
                     <br>
                     <label for="prioritymessage">Priority Message</label>
                     <textarea type="text" id="prioritymessage" name="prioritymessage"
-                        placeholder="Enter your message" class="form-control" maxlength="300"></textarea>
+                        placeholder="Enter your message (Include links to Media if applicable)" class="form-control" maxlength="300"></textarea>
                     <br>
                     <label for="fromemail">Email Address (Optional for Paypal, Required for Cryptocurrency.)</label>
                     <input type="text" id="fromemail" name="fromemail" class="form-control"
@@ -25,14 +25,22 @@
                     <label for="amount">Payment Currency</label>
                     <select name="currency" id="currency" class="custom-select">
                         <option value='paypal'>USD (PayPal)</option>
-                        <option value='btc'>BTC</option>
+                        <option value='btc'>Bitcoin (BTC)</option>
+                        <option value='eth'>Ethereum (ETH)</option>
+                        <option value='bch'>Bitcoin Cash (BCH)</option>
+                        <option value='ltc'>Litecoin (LTC)</option>
+                        <option value='xmr'>Monero (XMR)</option>
+                        <option value='qtum'>Quantum (QTUM)</option>
+                        <option value='dash'>Dash (DASH)</option>
+                        <option value='doge'>Dogecoin (DOGE)</option>
+
                     </select>
                     <br>
-                    <input style="margin-top: 20px;" type="submit" id="buy-button" value="Buy Priority Message (3 USD)"
+                    <input style="margin-top: 20px;" type="submit" id="buy-button" value="Buy Priority Message"
                         class="btn btn-primary btn-block">
                     <br>
-                    <label><strong>WARNING:</strong> ANY VIDEO MEDIA WILL ONLY BE PLAYED FOR AMOUNTS <strong>ABOVE 6 USD</strong>.</label>
-                    <label>NOTE: Your Priority Message will be read out by the host and/or TTS during intervals.</label>
+                    <label><strong style="color: red;">WARNING:</strong> ANY VIDEO MEDIA WILL ONLY BE PLAYED FOR AMOUNTS <strong>ABOVE 6 USD</strong>. The host also reserves the right to stop interacting with your media at their descretion and to completely omit your media all together.</label>
+                    <label><strong>NOTICE:</strong> Your Priority Message will be read out by the host and/or TTS during intervals.</label>
                     <label><strong>DISCLAIMER:</strong> By clicking on the Purchase Button, you agree that all Purchases are FINAL, and non refundable. Any chargebacks will be fought.</label>
                 </div>
             </form>

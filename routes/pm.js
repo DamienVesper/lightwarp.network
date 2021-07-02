@@ -53,6 +53,7 @@ router.get('/cancel', (req, res) => res.send('Cancelled'));
 
 router.post(`/`, async (req, res) => {
     if (!req.body.fromname || !req.body.prioritymessage || !req.body.amount) return res.json({ errors: `Please fill the required fields` });
+    if (req.body.amount >= 3) return res.json({ errors: `Below minimum amount.` })
     console.log(req.body.currency);
     console.log(req.body.amount);
     if (req.body.currency === `paypal`) {
@@ -109,7 +110,7 @@ router.post(`/`, async (req, res) => {
             }
         })
     } else {
-        if (!req.body.fromname || !req.body.prioritymessage || !req.body.fromemail) return res.json({ errors: `Please fill the required fields` });
+        if (!req.body.fromemail) return res.json({ errors: `Please fill the required fields` });
         const id = crypto.randomBytes(64).toString(`hex`);
 
         const transaction = await coinpayments.createTransaction({
@@ -169,7 +170,7 @@ router.get(`/success/paypal`, async (req, res) => {
                     log(`green`, `Transaction "${paymentId}" Completed.`)
                     const embed = new Discord.MessageEmbed()
                         .setTitle(transaction.name)
-                        .setAuthor(`Priority Message`, `https://lightwarp.network/assets/img/logo.jpg`, `https://${process.env.APP_DOMAIN}/prioritymessage`)
+                        .setAuthor(`Priority Message for ${transaction.price} USD`, `https://lightwarp.network/assets/img/logo.jpg`, `https://${process.env.APP_DOMAIN}/prioritymessage`)
                         .setDescription(transaction.arg)
                     client.channels.cache.get(process.env.MESSAGE_CHANNEL_ID).send(embed);
                     socket(`prioritymessage`, transaction.name, transaction.arg);
@@ -215,7 +216,7 @@ router.post(`/success/crypto`, async (req, res) => {
             log(`green`, `Transaction "${req.body.custom}" Completed.`)
             const embed = new Discord.MessageEmbed()
                 .setTitle(transaction.name)
-                .setAuthor(`Priority Message (CRYPTO)`, `https://lightwarp.network/assets/img/logo.jpg`, `https://${process.env.APP_DOMAIN}/prioritymessage`)
+                .setAuthor(`Priority Message for ${transaction.price} USD (CRYPTO)`, `https://lightwarp.network/assets/img/logo.jpg`, `https://${process.env.APP_DOMAIN}/prioritymessage`)
                 .setDescription(transaction.arg)
             client.channels.cache.get(process.env.MESSAGE_CHANNEL_ID).send(embed);
             socket(`prioritymessage`, transaction.name, transaction.arg);
