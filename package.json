@@ -4,6 +4,7 @@
   "description": "Store Platform for LightWarp",
   "main": "index.js",
   "author": "LightWarp",
+  "type": "module",
   "license": "MIT",
   "scripts": {
     "prod": "cross-env ENV=\"prod\" APP_DOMAIN=\"sockets.lightwarp.network\" URL=\"https://lightwarp.network\" MESSAGE_CHANNEL_ID=\"852617999658647552\" node index.js",
