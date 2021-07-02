@@ -8,6 +8,8 @@ const log = require(`../utils/log.js`);
 const socket = require(`../socket.js`)
 const crypto = require('crypto');
 const Coinpayments = require('coinpayments');
+const { verify } = require('coinpayments-ipn');
+const CoinpaymentsIPNError = require('coinpayments-ipn/lib/error');
 
 const coinpayments = new Coinpayments ({
     key: process.env.COINPAYMENTS_KEY,
@@ -54,14 +56,14 @@ router.post(`/btc`, async (req, res) => {
 
     const transaction = await coinpayments.createTransaction({
         currency1: `USD`,
-        currency2: `LTCT`,
+        currency2: process.env.ENV === `prod` ? `BTC` : `LTCT`,
         amount: 3,
         buyer_email: req.body.fromemail,
         buyer_name: req.body.fromname,
         item_name: `LightWarp Priority Message`,
         custom: id,
         ipm_url: `${process.env.URL}/prioritymessage/success/btc`,
-        success_url: `${process.env.URL}/prioritymessage/success/crypto`,
+        success_url: `${process.env.URL}/prioritymessage/thankyou`,
         cancel_url: `${process.env.URL}/prioritymessage/cancel`,
     })
 
@@ -179,8 +181,30 @@ router.get(`/success/paypal`, async (req, res) => {
 })
 
 router.get(`/success/btc`, async (req, res) => {
-    log(`red`, req.body);
+    let isValid, error;
 
+    if (
+        !req.get(`HMAC`) ||
+        !req.body.ipn_mode ||
+        req.body.ipn_mode !== `hmac` ||
+        MERCHANT_ID !== req.body.merchant
+    ) {
+        return res.send(`Invalid request`);
+    }
+
+    try {
+        isValid = verify(req.get(`HMAC`), process.env.IPN_SECRET, req.body);
+    } catch (e) {
+        error = e;
+    }
+  
+    if (error && error) {
+        return res.json({errors: error});
+    }
+  
+    if (!isValid) {
+        return res.send(`Hmac calculation does not match`);
+    }
 
     Transaction.findOne({
         transactionID: paymentId
@@ -196,7 +220,6 @@ router.get(`/success/btc`, async (req, res) => {
                 .setDescription(transaction.arg)
             client.channels.cache.get(process.env.MESSAGE_CHANNEL_ID).send(embed);
             socket(`prioritymessage`, transaction.name, transaction.arg);
-            res.redirect('/prioritymessage/thankyou');
         })
     })
 })

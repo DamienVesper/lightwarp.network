@@ -297,6 +297,11 @@ clone-response@^1.0.2:
   dependencies:
     mimic-response "^1.0.0"
 
+coinpayments-ipn@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/coinpayments-ipn/-/coinpayments-ipn-1.0.0.tgz#9d01f6bf5b1417e72feee750690c5404bd0e8944"
+  integrity sha512-ftDvTrxIBq/xWK1Hy+bJyiFIcD51eihjXVvZ/YovQVy6O+jNKqIA4sjmAf25zO269Ra0/n+R2IN3iVsOnd0ZTw==
+
 coinpayments@^2.1.3:
   version "2.1.3"
   resolved "https://registry.yarnpkg.com/coinpayments/-/coinpayments-2.1.3.tgz#0733745a9b93a4a7d2aa5ccea9c1cee39b1db7a8"
