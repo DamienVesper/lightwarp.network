@@ -74,16 +74,11 @@ router.post(`/btc`, async (req, res) => {
     })
     newTransaction.save(err => {
         if (err) return log(`red`, err)
-        log(`yellow`, `Transaction ${payment.id} saved to Database`)
-        log(`yellow`, `NEW PAYMENT INITIALIZED (ID: ${payment.id}) From: ${req.body.fromname}. With Message: ${req.body.prioritymessage}`)
-        for(let i = 0;i < payment.links.length;i++){
-            if(payment.links[i].rel === 'approval_url'){
-                res.redirect(payment.links[i].href);
-            }
-        }
+        log(`yellow`, `Transaction ${id} saved to Database`)
+        log(`yellow`, `NEW PAYMENT INITIALIZED (ID: ${id}) From: ${req.body.fromname}. With Message: ${req.body.prioritymessage}`)
+        res.redirect(transaction.checkout_url);
     })
 
-    res.redirect(transaction.checkout_url);
 
 });
 
