@@ -189,8 +189,7 @@ router.post(`/success/btc`, async (req, res) => {
     if (
         !req.get(`HMAC`) ||
         !req.body.ipn_mode ||
-        req.body.ipn_mode !== `hmac` ||
-        MERCHANT_ID !== req.body.merchant
+        req.body.ipn_mode !== `hmac`
     ) {
         return res.send(`Invalid request`);
     }
