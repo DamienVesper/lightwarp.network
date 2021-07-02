@@ -184,7 +184,7 @@ router.get(`/success/paypal`, async (req, res) => {
 router.post(`/success/btc`, async (req, res) => {
     let isValid, error;
 
-    log(`red`, `INITIALIZED`)
+    log(`red`, req.body)
 
     if (
         !req.get(`HMAC`) ||
