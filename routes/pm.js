@@ -54,7 +54,7 @@ router.post(`/btc`, async (req, res) => {
 
     const transaction = await coinpayments.createTransaction({
         currency1: `USD`,
-        currency2: `BTC`,
+        currency2: `LTCT`,
         amount: 3,
         buyer_email: req.body.fromemail,
         buyer_name: req.body.fromname,
