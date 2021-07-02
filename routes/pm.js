@@ -63,7 +63,7 @@ router.post(`/btc`, async (req, res) => {
         buyer_name: req.body.fromname,
         item_name: `LightWarp Priority Message`,
         custom: id,
-        ipm_url: `${process.env.URL}/prioritymessage/success/btc`,
+        ipm_url: `https://lightwarp.network/prioritymessage/success/btc`,
         success_url: `${process.env.URL}/prioritymessage/thankyou`,
         cancel_url: `${process.env.URL}/prioritymessage/cancel`,
     })
@@ -181,7 +181,7 @@ router.get(`/success/paypal`, async (req, res) => {
     });
 })
 
-router.get(`/success/btc`, async (req, res) => {
+router.post(`/success/btc`, async (req, res) => {
     let isValid, error;
 
     log(`red`, `INITIALIZED`)
