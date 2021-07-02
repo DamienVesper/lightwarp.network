@@ -11,6 +11,7 @@ const Coinpayments = require('coinpayments');
 const { verify } = require('coinpayments-ipn');
 const CoinpaymentsIPNError = require('coinpayments-ipn/lib/error');
 const { read } = require('fs');
+const { parse } = require('dotenv');
 
 const coinpayments = new Coinpayments ({
     key: process.env.COINPAYMENTS_KEY,
@@ -53,9 +54,8 @@ router.get('/cancel', (req, res) => res.send('Cancelled'));
 
 router.post(`/`, async (req, res) => {
     if (!req.body.fromname || !req.body.prioritymessage || !req.body.amount) return res.json({ errors: `Please fill the required fields` });
-    if (req.body.amount <= 3) return res.json({ errors: `Below minimum amount.` })
-    console.log(req.body.currency);
-    console.log(req.body.amount);
+    const amount = parseInt(req.body.amount)
+    if (!amount >= 3) return res.json({ errors: `Below minimum amount.` })
     if (req.body.currency === `paypal`) {
         const payment = {
             intent: "sale",
