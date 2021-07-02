@@ -1,5 +1,3 @@
-require(`dotenv`).config();
-
 // Packages
 const express = require(`express`);
 const cors = require(`cors`);
