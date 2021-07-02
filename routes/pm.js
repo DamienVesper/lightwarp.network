@@ -6,6 +6,13 @@ const client = new Discord.Client();
 const Transaction = require(`../models/transaction.model.js`);
 const log = require(`../utils/log.js`);
 const socket = require(`../socket.js`)
+const cryptoRandomString = require(`crypto-random-string`);
+const Coinpayments = require('coinpayments');
+
+const coinpayments = new Coinpayments ({
+    key: process.env.COINPAYMENTS_KEY,
+    secret: process.env.COINPAYMENTS_SECRET
+})
 
 // Paypal Configuration.
 if (process.env.ENV === `dev`) {
@@ -34,13 +41,53 @@ if (process.env.ENV === `dev`) {
     });
 }
 
-router.get(`/`, async (req, res) => {res.render(`pm`)});
+router.get(`/`, async (req, res) => { res.render(`pm`) });
 
 router.get(`/thankyou`, async (req, res) => {res.render(`success`)});
 
 router.get('/cancel', (req, res) => res.send('Cancelled'));
 
-router.post(`/`, async (req, res) => {
+router.post(`/btc`, async (req, res) => {
+    if (!req.body.fromname || !req.body.prioritymessage || !req.body.fromemail) return res.json({ errors: `Please fill the required fields` });
+
+    const id = cryptoRandomString({length: 64});
+
+    const transaction = await coinpayments.createTransaction({
+        currency1: `USD`,
+        currency2: `BTC`,
+        amount: 3,
+        buyer_email: req.body.fromemail,
+        buyer_name: req.body.fromname,
+        item_name: `LightWarp Priority Message`,
+        custom: id,
+        ipm_url: `${process.env.URL}/prioritymessage/success/btc`,
+        success_url: `${process.env.URL}/prioritymessage/success/crypto`,
+        cancel_url: `${process.env.URL}/prioritymessage/cancel`,
+    })
+
+    const newTransaction = new Transaction({
+        transactionID: id,
+        name: req.body.fromname,
+        arg: req.body.prioritymessage,
+        price: `3`,
+        type: `btc`
+    })
+    newTransaction.save(err => {
+        if (err) return log(`red`, err)
+        log(`yellow`, `Transaction ${payment.id} saved to Database`)
+        log(`yellow`, `NEW PAYMENT INITIALIZED (ID: ${payment.id}) From: ${req.body.fromname}. With Message: ${req.body.prioritymessage}`)
+        for(let i = 0;i < payment.links.length;i++){
+            if(payment.links[i].rel === 'approval_url'){
+                res.redirect(payment.links[i].href);
+            }
+        }
+    })
+
+    res.redirect(transaction.checkout_url);
+
+});
+
+router.post(`/paypal`, async (req, res) => {
     if (!req.body.fromname || !req.body.prioritymessage) return res.json({ errors: `Please fill the required fields` });
 
     const payment = {
@@ -49,7 +96,7 @@ router.post(`/`, async (req, res) => {
             payment_method: "paypal"
         },
         redirect_urls: {
-            return_url: `${process.env.URL}/prioritymessage/success`,
+            return_url: `${process.env.URL}/prioritymessage/success/paypal`,
             cancel_url: `${process.env.URL}/prioritymessage/cancel`
         },
         transactions: [{
@@ -79,7 +126,8 @@ router.post(`/`, async (req, res) => {
                     transactionID: payment.id,
                     name: req.body.fromname,
                     arg: req.body.prioritymessage,
-                    price: `3`
+                    price: `3`,
+                    type: `paypal`
                 })
                 newTransaction.save(err => {
                     if (err) return log(`red`, err)
@@ -96,7 +144,7 @@ router.post(`/`, async (req, res) => {
     })
 });
 
-router.get(`/success`, async (req, res) => {
+router.get(`/success/paypal`, async (req, res) => {
     const payerId = req.query.PayerID;
     const paymentId = req.query.paymentId;
 
@@ -133,6 +181,29 @@ router.get(`/success`, async (req, res) => {
             })
         }
     });
+})
+
+router.get(`/success/btc`, async (req, res) => {
+    log(`red`, req.body);
+
+
+    Transaction.findOne({
+        transactionID: paymentId
+    }).then(transaction => {
+        if (!transaction) return res.status(404).send(`Error: Transaction does not exist`)
+        if (transaction.paid == true) return res.send(`Transaction ${paymentId} is already Complete`)
+        transaction.paid = true;
+        transaction.save(() => {
+            log(`green`, `Transaction "${paymentId}" Completed.`)
+            const embed = new Discord.MessageEmbed()
+                .setTitle(transaction.name)
+                .setAuthor(`Priority Message`, `https://lightwarp.network/assets/img/logo.jpg`, `https://${process.env.APP_DOMAIN}/prioritymessage`)
+                .setDescription(transaction.arg)
+            client.channels.cache.get(process.env.MESSAGE_CHANNEL_ID).send(embed);
+            socket(`prioritymessage`, transaction.name, transaction.arg);
+            res.redirect('/prioritymessage/thankyou');
+        })
+    })
 })
 
 client.login(process.env.DISCORD_TOKEN);

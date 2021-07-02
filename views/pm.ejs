@@ -4,7 +4,7 @@
 <div class="row mt-5">
     <div class="col-md-6 m-auto">
         <div class="card card-body" style="background-color: #b1cbe6;">
-            <form action="/prioritymessage" method="post" name="prioritymessage-form" id="prioritymessage-form">
+            <form method="post" name="prioritymessage-form" id="prioritymessage-form">
                 <div class="form-group">
                     <label for="fromname">Your Name</label>
                     <input type="text" id="fromname" name="fromname" class="form-control"
@@ -14,7 +14,14 @@
                     <textarea type="text" id="prioritymessage" name="prioritymessage"
                         placeholder="Enter your message" class="form-control" maxlength="300"></textarea>
                     <br>
-                    <input type="submit" id="buy-now-button" value="Buy Priority Message with Paypal (3$)"
+                    <label for="prioritymessage">Email Address (Optional for Paypal, Required for Cryptocurrency.)</label>
+                    <input type="text" id="fromemail" name="fromemail" class="form-control"
+                        placeholder="Enter your email (For Crypto Payments)">
+                    <br>
+                    <input type="submit" id="paypal-button" formaction="/prioritymessage/paypal" value="Buy Priority Message with Paypal (3$)"
+                        class="btn btn-primary btn-block">
+                    <br>
+                    <input type="submit" id="bitcoin-button" formaction="/prioritymessage/btc" value="Buy Priority Message with Bitcoin (BTC) (3$)"
                         class="btn btn-primary btn-block">
                     <br>
                     <label><strong>WARNING:</strong> DO NOT REQUEST MEDIA SHARE IN PRIORITY MESSAGE, REQUEST <a href="/mediashare">HERE</a></label>
@@ -32,6 +39,7 @@
             alert("Please fill the required fields")
             return e.preventDefault();
         }
-        document.getElementById(`buy-now-button`).disabled = true
+        document.getElementById(`paypal-button`).disabled = true
+        document.getElementById(`bitcoin-button`).disabled = true
     });
 </script>
