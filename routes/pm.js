@@ -13,7 +13,8 @@ const CoinpaymentsIPNError = require('coinpayments-ipn/lib/error');
 
 const coinpayments = new Coinpayments ({
     key: process.env.COINPAYMENTS_KEY,
-    secret: process.env.COINPAYMENTS_SECRET
+    secret: process.env.COINPAYMENTS_SECRET,
+    autoIpn: true
 })
 
 // Paypal Configuration.
