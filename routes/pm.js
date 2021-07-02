@@ -6,7 +6,7 @@ const client = new Discord.Client();
 const Transaction = require(`../models/transaction.model.js`);
 const log = require(`../utils/log.js`);
 const socket = require(`../socket.js`)
-const cryptoRandomString = require(`crypto-random-string`);
+const crypto = require('crypto');
 const Coinpayments = require('coinpayments');
 
 const coinpayments = new Coinpayments ({
@@ -50,7 +50,7 @@ router.get('/cancel', (req, res) => res.send('Cancelled'));
 router.post(`/btc`, async (req, res) => {
     if (!req.body.fromname || !req.body.prioritymessage || !req.body.fromemail) return res.json({ errors: `Please fill the required fields` });
 
-    const id = cryptoRandomString({length: 64});
+    const id = crypto.randomBytes(64).toString(`hex`);
 
     const transaction = await coinpayments.createTransaction({
         currency1: `USD`,
