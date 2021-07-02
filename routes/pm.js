@@ -10,6 +10,7 @@ const crypto = require('crypto');
 const Coinpayments = require('coinpayments');
 const { verify } = require('coinpayments-ipn');
 const CoinpaymentsIPNError = require('coinpayments-ipn/lib/error');
+const { read } = require('fs');
 
 const coinpayments = new Coinpayments ({
     key: process.env.COINPAYMENTS_KEY,
@@ -50,96 +51,94 @@ router.get(`/thankyou`, async (req, res) => {res.render(`success`)});
 
 router.get('/cancel', (req, res) => res.send('Cancelled'));
 
-router.post(`/btc`, async (req, res) => {
-    if (!req.body.fromname || !req.body.prioritymessage || !req.body.fromemail) return res.json({ errors: `Please fill the required fields` });
-
-    const id = crypto.randomBytes(64).toString(`hex`);
-
-    const transaction = await coinpayments.createTransaction({
-        currency1: `USD`,
-        currency2: process.env.ENV === `prod` ? `BTC` : `LTCT`,
-        amount: 3,
-        buyer_email: req.body.fromemail,
-        buyer_name: req.body.fromname,
-        item_name: `LightWarp Priority Message`,
-        custom: id,
-        ipm_url: `https://lightwarp.network/prioritymessage/success/btc`,
-        success_url: `${process.env.URL}/prioritymessage/thankyou`,
-        cancel_url: `${process.env.URL}/prioritymessage/cancel`,
-    })
-
-    const newTransaction = new Transaction({
-        transactionID: id,
-        name: req.body.fromname,
-        arg: req.body.prioritymessage,
-        price: `3`,
-        type: `btc`
-    })
-    newTransaction.save(err => {
-        if (err) return log(`red`, err)
-        log(`yellow`, `Transaction ${id} saved to Database`)
-        log(`yellow`, `NEW PAYMENT INITIALIZED (ID: ${id}) From: ${req.body.fromname}. With Message: ${req.body.prioritymessage}`)
-        res.redirect(transaction.checkout_url);
-    })
-
-
-});
-
-router.post(`/paypal`, async (req, res) => {
-    if (!req.body.fromname || !req.body.prioritymessage) return res.json({ errors: `Please fill the required fields` });
-
-    const payment = {
-        intent: "sale",
-        payer: {
-            payment_method: "paypal"
-        },
-        redirect_urls: {
-            return_url: `${process.env.URL}/prioritymessage/success/paypal`,
-            cancel_url: `${process.env.URL}/prioritymessage/cancel`
-        },
-        transactions: [{
-            item_list: {
-                items: [{
-                    name: "LightWarp Priority Message",
-                    sku: "LWN-PM",
-                    price: "3.00",
+router.post(`/`, async (req, res) => {
+    if (!req.body.fromname || !req.body.prioritymessage || !req.body.amount) return res.json({ errors: `Please fill the required fields` });
+    console.log(req.body.currency);
+    console.log(req.body.amount);
+    if (req.body.currency === `paypal`) {
+        const payment = {
+            intent: "sale",
+            payer: {
+                payment_method: "paypal"
+            },
+            redirect_urls: {
+                return_url: `${process.env.URL}/prioritymessage/success/paypal`,
+                cancel_url: `${process.env.URL}/prioritymessage/cancel`
+            },
+            transactions: [{
+                item_list: {
+                    items: [{
+                        name: "LightWarp Priority Message",
+                        sku: "LWN-PM",
+                        price: req.body.amount,
+                        currency: "USD",
+                        quantity: 1
+                    }]
+                },
+                amount: {
                     currency: "USD",
-                    quantity: 1
-                }]
-            },
-            amount: {
-                currency: "USD",
-                total: "3.00"
-            },
-            description: "LightWarpTV Priority Message"
-        }]
-    };
-    paypal.payment.create(payment, (error, payment) => {
-        if (error) {
-            throw error;
-        } else {
-            Transaction.findOne({ transactionID:  payment.id}).then(transaction => {
-                if (transaction) return log(`red`, `Transaction already exists.`)
-                const newTransaction = new Transaction({
-                    transactionID: payment.id,
-                    name: req.body.fromname,
-                    arg: req.body.prioritymessage,
-                    price: `3`,
-                    type: `paypal`
-                })
-                newTransaction.save(err => {
-                    if (err) return log(`red`, err)
-                    log(`yellow`, `Transaction ${payment.id} saved to Database`)
-                    log(`yellow`, `NEW PAYMENT INITIALIZED (ID: ${payment.id}) From: ${req.body.fromname}. With Message: ${req.body.prioritymessage}`)
-                    for(let i = 0;i < payment.links.length;i++){
-                        if(payment.links[i].rel === 'approval_url'){
-                            res.redirect(payment.links[i].href);
+                    total: req.body.amount
+                },
+                description: "LightWarpTV Priority Message"
+            }]
+        };
+        paypal.payment.create(payment, (error, payment) => {
+            if (error) {
+                throw error;
+            } else {
+                Transaction.findOne({ transactionID:  payment.id}).then(transaction => {
+                    if (transaction) return log(`red`, `Transaction already exists.`)
+                    const newTransaction = new Transaction({
+                        transactionID: payment.id,
+                        name: req.body.fromname,
+                        arg: req.body.prioritymessage,
+                        price: req.body.amount,
+                        type: `paypal`
+                    })
+                    newTransaction.save(err => {
+                        if (err) return log(`red`, err)
+                        log(`yellow`, `Transaction ${payment.id} saved to Database`)
+                        log(`yellow`, `NEW PAYMENT INITIALIZED (ID: ${payment.id}) From: ${req.body.fromname}. With Message: ${req.body.prioritymessage}`)
+                        for(let i = 0;i < payment.links.length;i++){
+                            if(payment.links[i].rel === 'approval_url'){
+                                res.redirect(payment.links[i].href);
+                            }
                         }
-                    }
+                    })
                 })
-            })
-        }
-    })
+            }
+        })
+    } else {
+        if (!req.body.fromname || !req.body.prioritymessage || !req.body.fromemail) return res.json({ errors: `Please fill the required fields` });
+        const id = crypto.randomBytes(64).toString(`hex`);
+
+        const transaction = await coinpayments.createTransaction({
+            currency1: `USD`,
+            currency2: process.env.ENV === `prod` ? req.body.currency.toUpperCase() : `LTCT`,
+            amount: req.body.amount,
+            buyer_email: req.body.fromemail,
+            buyer_name: req.body.fromname,
+            item_name: `LightWarp Priority Message`,
+            custom: id,
+            ipm_url: `https://lightwarp.network/prioritymessage/success/crypto`,
+            success_url: `${process.env.URL}/prioritymessage/thankyou`,
+            cancel_url: `${process.env.URL}/prioritymessage/cancel`,
+        })
+
+        const newTransaction = new Transaction({
+            transactionID: id,
+            name: req.body.fromname,
+            arg: req.body.prioritymessage,
+            price: req.body.amount,
+            type: req.body.currency
+        })
+        newTransaction.save(err => {
+            if (err) return log(`red`, err)
+            log(`yellow`, `Transaction ${id} saved to Database`)
+            log(`yellow`, `NEW PAYMENT INITIALIZED (ID: ${id}) From: ${req.body.fromname}. With Message: ${req.body.prioritymessage}`)
+            res.redirect(transaction.checkout_url);
+        })
+    }
 });
 
 router.get(`/success/paypal`, async (req, res) => {
@@ -181,9 +180,9 @@ router.get(`/success/paypal`, async (req, res) => {
     });
 })
 
-router.post(`/success/btc`, async (req, res) => {
+router.post(`/success/crypto`, async (req, res) => {
     let isValid, error;
-    
+
     if (
         !req.get(`HMAC`) ||
         !req.body.ipn_mode ||

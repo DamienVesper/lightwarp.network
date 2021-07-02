@@ -44,14 +44,12 @@ app.use(ejsLayouts);
 const indexRouter = require(`./routes/index.js`);
 const apiRouter = require(`./routes/api.js`);
 const pmRouter = require(`./routes/pm.js`);
-const mediaRouter = require(`./routes/media.js`);
 const listenRouter = require(`./routes/listen.js`);
 const widgetRouter = require(`./routes/widget.js`);
 
 app.use(`/`, indexRouter);
 app.use(`/api`, apiRouter);
 app.use(`/prioritymessage`, cors(), pmRouter);
-app.use(`/mediashare`, cors(), mediaRouter);
 app.use(`/listen`, listenRouter);
 app.use(`/widget`, widgetRouter);
 

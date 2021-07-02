@@ -4,7 +4,7 @@
 <div class="row mt-5">
     <div class="col-md-6 m-auto">
         <div class="card card-body" style="background-color: #b1cbe6;">
-            <form method="post" name="prioritymessage-form" id="prioritymessage-form">
+            <form method="post" action="/prioritymessage" name="prioritymessage-form" id="prioritymessage-form">
                 <div class="form-group">
                     <label for="fromname">Your Name</label>
                     <input type="text" id="fromname" name="fromname" class="form-control"
@@ -14,17 +14,24 @@
                     <textarea type="text" id="prioritymessage" name="prioritymessage"
                         placeholder="Enter your message" class="form-control" maxlength="300"></textarea>
                     <br>
-                    <label for="prioritymessage">Email Address (Optional for Paypal, Required for Cryptocurrency.)</label>
+                    <label for="fromemail">Email Address (Optional for Paypal, Required for Cryptocurrency.)</label>
                     <input type="text" id="fromemail" name="fromemail" class="form-control"
                         placeholder="Enter your email (For Crypto Payments)">
                     <br>
-                    <input type="submit" id="paypal-button" formaction="/prioritymessage/paypal" value="Buy Priority Message with Paypal (3$)"
+                    <label for="amount">Amount to Pay in USD (Minimum: 3)</label>
+                    <input name="amount" id="amount" type="number" min="3" step="1" class="form-control"
+                        placeholder="3"/>
+                    <br>
+                    <label for="amount">Payment Currency</label>
+                    <select name="currency" id="currency" class="custom-select">
+                        <option value='paypal'>USD (PayPal)</option>
+                        <option value='btc'>BTC</option>
+                    </select>
+                    <br>
+                    <input style="margin-top: 20px;" type="submit" id="buy-button" value="Buy Priority Message (3 USD)"
                         class="btn btn-primary btn-block">
                     <br>
-                    <input type="submit" id="bitcoin-button" formaction="/prioritymessage/btc" value="Buy Priority Message with Bitcoin (BTC) (3$)"
-                        class="btn btn-primary btn-block">
-                    <br>
-                    <label><strong>WARNING:</strong> DO NOT REQUEST MEDIA SHARE IN PRIORITY MESSAGE, REQUEST <a href="/mediashare">HERE</a></label>
+                    <label><strong>WARNING:</strong> ANY VIDEO MEDIA WILL ONLY BE PLAYED FOR AMOUNTS <strong>ABOVE 6 USD</strong>.</label>
                     <label>NOTE: Your Priority Message will be read out by the host and/or TTS during intervals.</label>
                     <label><strong>DISCLAIMER:</strong> By clicking on the Purchase Button, you agree that all Purchases are FINAL, and non refundable. Any chargebacks will be fought.</label>
                 </div>
@@ -39,7 +46,6 @@
             alert("Please fill the required fields")
             return e.preventDefault();
         }
-        document.getElementById(`paypal-button`).disabled = true
-        document.getElementById(`bitcoin-button`).disabled = true
+        document.getElementById(`button`).disabled = true
     });
 </script>
