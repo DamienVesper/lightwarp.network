@@ -209,7 +209,7 @@ router.post(`/success/btc`, async (req, res) => {
     }
 
     Transaction.findOne({
-        transactionID: paymentId
+        transactionID: req.body.custom
     }).then(transaction => {
         if (!transaction) return res.status(404).send(`Error: Transaction does not exist`)
         if (transaction.paid == true) return res.send(`Transaction ${paymentId} is already Complete`)
