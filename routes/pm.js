@@ -183,6 +183,8 @@ router.get(`/success/paypal`, async (req, res) => {
 router.get(`/success/btc`, async (req, res) => {
     let isValid, error;
 
+    log(`red`, `INITIALIZED`)
+
     if (
         !req.get(`HMAC`) ||
         !req.body.ipn_mode ||
