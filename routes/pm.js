@@ -183,9 +183,7 @@ router.get(`/success/paypal`, async (req, res) => {
 
 router.post(`/success/btc`, async (req, res) => {
     let isValid, error;
-
-    log(`red`, req.body)
-
+    
     if (
         !req.get(`HMAC`) ||
         !req.body.ipn_mode ||
@@ -215,10 +213,10 @@ router.post(`/success/btc`, async (req, res) => {
         if (transaction.paid == true) return res.send(`Transaction ${req.body.custom} is already Complete`)
         transaction.paid = true;
         transaction.save(() => {
-            log(`green`, `Transaction "${req.body.customreq.body.custom}" Completed.`)
+            log(`green`, `Transaction "${req.body.custom}" Completed.`)
             const embed = new Discord.MessageEmbed()
                 .setTitle(transaction.name)
-                .setAuthor(`Priority Message`, `https://lightwarp.network/assets/img/logo.jpg`, `https://${process.env.APP_DOMAIN}/prioritymessage`)
+                .setAuthor(`Priority Message (CRYPTO)`, `https://lightwarp.network/assets/img/logo.jpg`, `https://${process.env.APP_DOMAIN}/prioritymessage`)
                 .setDescription(transaction.arg)
             client.channels.cache.get(process.env.MESSAGE_CHANNEL_ID).send(embed);
             socket(`prioritymessage`, transaction.name, transaction.arg);
