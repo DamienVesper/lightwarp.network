@@ -185,6 +185,8 @@ router.get(`/success/paypal`, async (req, res) => {
 router.post(`/success/crypto`, async (req, res) => {
     let isValid, error;
 
+    console.log(req.body)
+
     if (
         !req.get(`HMAC`) ||
         !req.body.ipn_mode ||
