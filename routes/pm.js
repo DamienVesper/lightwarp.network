@@ -145,40 +145,41 @@ router.post(`/`, async (req, res) => {
 router.get(`/success/paypal`, async (req, res) => {
     const payerId = req.query.PayerID;
     const paymentId = req.query.paymentId;
+    Transaction.findOne({
+        transactionID: paymentId
+    }).then(transaction => {
 
-    const executePayment = {
-        payer_id: payerId,
-        transactions: [{
-            amount: {
-                currency: "USD",
-                total: "3.00"
+        const executePayment = {
+            payer_id: payerId,
+            transactions: [{
+                amount: {
+                    currency: "USD",
+                    total: transaction.price.toString()
+                }
+            }]
+        };
+        paypal.payment.execute(paymentId, executePayment, function (error, payment) {
+            if (error) {
+                console.log(error.response);
+                return res.send(`Error in Executing Transaction`);
+            } else {
+                    if (!transaction) return res.status(404).send(`Error: Transaction does not exist`)
+                    if (transaction.paid == true) return res.send(`Transaction ${paymentId} is already Complete`)
+                    transaction.paid = true;
+                    transaction.save(() => {
+                        log(`green`, `Transaction "${paymentId}" Completed.`)
+                        const embed = new Discord.MessageEmbed()
+                            .setTitle(transaction.name)
+                            .setAuthor(`Priority Message for ${transaction.price} USD`, `https://lightwarp.network/assets/img/logo.jpg`, `https://${process.env.APP_DOMAIN}/prioritymessage`)
+                            .setDescription(transaction.arg)
+                        client.channels.cache.get(process.env.MESSAGE_CHANNEL_ID).send(embed);
+                        socket(`prioritymessage`, transaction.name, transaction.arg);
+                        res.redirect('/prioritymessage/thankyou');
+                    })
             }
-        }]
-    };
-    paypal.payment.execute(paymentId, executePayment, function (error, payment) {
-        if (error) {
-            console.log(error.response);
-            return res.send(`Error in Executing Transaction`);
-        } else {
-            Transaction.findOne({
-                transactionID: paymentId
-            }).then(transaction => {
-                if (!transaction) return res.status(404).send(`Error: Transaction does not exist`)
-                if (transaction.paid == true) return res.send(`Transaction ${paymentId} is already Complete`)
-                transaction.paid = true;
-                transaction.save(() => {
-                    log(`green`, `Transaction "${paymentId}" Completed.`)
-                    const embed = new Discord.MessageEmbed()
-                        .setTitle(transaction.name)
-                        .setAuthor(`Priority Message for ${transaction.price} USD`, `https://lightwarp.network/assets/img/logo.jpg`, `https://${process.env.APP_DOMAIN}/prioritymessage`)
-                        .setDescription(transaction.arg)
-                    client.channels.cache.get(process.env.MESSAGE_CHANNEL_ID).send(embed);
-                    socket(`prioritymessage`, transaction.name, transaction.arg);
-                    res.redirect('/prioritymessage/thankyou');
-                })
-            })
-        }
-    });
+        });
+    })
+
 })
 
 router.post(`/success/crypto`, async (req, res) => {
