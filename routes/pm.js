@@ -202,7 +202,7 @@ router.post(`/success/crypto`, async (req, res) => {
     if (error && error) return res.json({errors: error});
     if (!isValid) return res.send(`Hmac calculation does not match`);
 
-    if (req.body.status === `100`) {
+    if (req.body.status === `2`) {
         Transaction.findOne({
             transactionID: req.body.custom
         }).then(transaction => {
