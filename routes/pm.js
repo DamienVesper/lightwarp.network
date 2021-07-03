@@ -191,9 +191,7 @@ router.post(`/success/crypto`, async (req, res) => {
         !req.get(`HMAC`) ||
         !req.body.ipn_mode ||
         req.body.ipn_mode !== `hmac`
-    ) {
-        return res.send(`Invalid request`);
-    }
+    ) return res.send(`Invalid request`);
 
     try {
         isValid = verify(req.get(`HMAC`), process.env.IPN_SECRET, req.body);
@@ -201,30 +199,27 @@ router.post(`/success/crypto`, async (req, res) => {
         error = e;
     }
   
-    if (error && error) {
-        return res.json({errors: error});
-    }
-  
-    if (!isValid) {
-        return res.send(`Hmac calculation does not match`);
-    }
+    if (error && error) return res.json({errors: error});
+    if (!isValid) return res.send(`Hmac calculation does not match`);
 
-    Transaction.findOne({
-        transactionID: req.body.custom
-    }).then(transaction => {
-        if (!transaction) return res.status(404).send(`Error: Transaction does not exist`)
-        if (transaction.paid == true) return res.send(`Transaction ${req.body.custom} is already Complete`)
-        transaction.paid = true;
-        transaction.save(() => {
-            log(`green`, `Transaction "${req.body.custom}" Completed.`)
-            const embed = new Discord.MessageEmbed()
-                .setTitle(transaction.name)
-                .setAuthor(`Priority Message for ${transaction.price} USD (CRYPTO)`, `https://lightwarp.network/assets/img/logo.jpg`, `https://${process.env.APP_DOMAIN}/prioritymessage`)
-                .setDescription(transaction.arg)
-            client.channels.cache.get(process.env.MESSAGE_CHANNEL_ID).send(embed);
-            socket(`prioritymessage`, transaction.name, transaction.arg);
+    if (req.body.status === `2`) {
+        Transaction.findOne({
+            transactionID: req.body.custom
+        }).then(transaction => {
+            if (!transaction) return res.status(404).send(`Error: Transaction does not exist`)
+            if (transaction.paid == true) return res.send(`Transaction ${req.body.custom} is already Complete`)
+            transaction.paid = true;
+            transaction.save(() => {
+                log(`green`, `Transaction "${req.body.custom}" Completed.`)
+                const embed = new Discord.MessageEmbed()
+                    .setTitle(transaction.name)
+                    .setAuthor(`Priority Message for ${transaction.price} USD (CRYPTO)`, `https://lightwarp.network/assets/img/logo.jpg`, `https://${process.env.APP_DOMAIN}/prioritymessage`)
+                    .setDescription(transaction.arg)
+                client.channels.cache.get(process.env.MESSAGE_CHANNEL_ID).send(embed);
+                socket(`prioritymessage`, transaction.name, transaction.arg);
+            })
         })
-    })
+    } else return res.send(`Incomplete`)
 })
 
 client.login(process.env.DISCORD_TOKEN);
