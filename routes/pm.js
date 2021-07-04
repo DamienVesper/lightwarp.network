@@ -174,7 +174,7 @@ router.get(`/success/paypal`, async (req, res) => {
                             .setAuthor(`Priority Message for ${transaction.price} USD`, `https://lightwarp.network/assets/img/logo.jpg`, `https://${process.env.APP_DOMAIN}/prioritymessage`)
                             .setDescription(transaction.arg)
                         client.channels.cache.get(process.env.MESSAGE_CHANNEL_ID).send(embed);
-                        socket(`prioritymessage`, transaction.name, transaction.arg);
+                        socket(`prioritymessage`, transaction.name, transaction.arg, transaction.price);
                         res.redirect('/prioritymessage/thankyou');
                     })
             }
@@ -215,7 +215,7 @@ router.post(`/success/crypto`, async (req, res) => {
                     .setAuthor(`Priority Message for ${transaction.price} USD (CRYPTO)`, `https://lightwarp.network/assets/img/logo.jpg`, `https://${process.env.APP_DOMAIN}/prioritymessage`)
                     .setDescription(transaction.arg)
                 client.channels.cache.get(process.env.MESSAGE_CHANNEL_ID).send(embed);
-                socket(`prioritymessage`, transaction.name, transaction.arg);
+                socket(`prioritymessage`, transaction.name, transaction.arg, transaction.price);
             })
         })
     } else {
