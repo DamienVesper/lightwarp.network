@@ -48,13 +48,7 @@
 
     socket.on(`prioritymessage`, async (data) => {
         console.log(data)
-        const message = `Priority Message from ${data.name} for 3 Dollars. ${data.arg}`;
-        messages.push(message)
-    });
-
-    socket.on(`mediashare`, async (data) => {
-        console.log(data)
-        const message = `Recieved Media Share from: ${data.name}, for 6 Dollars.`;
+        const message = `Priority Message from ${data.name} for ${data.price} Dollars. ${data.arg}`;
         messages.push(message)
     });
 

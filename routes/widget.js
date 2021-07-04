@@ -18,7 +18,7 @@ router.get(`/bye`, async (req, res) => {
 });
 
 router.post(`/fake`, async (req, res) => {
-    const { name, message } = req.body;
+    const { name, message, price } = req.body;
     broadcast(`prioritymessage`, name, message);
 
     log(`green`, `fake priority message from ${name} >>> ${message}.`);

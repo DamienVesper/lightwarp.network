@@ -22,7 +22,7 @@ io.on(`connection`, async (socket) => {
 
 const broadcast = (type, name, arg) => {
     if (type === `clearall`) io.sockets.emit(`clearall`);
-    io.sockets.emit(type, { name, arg });
+    io.sockets.emit(type, { name, arg, price });
 }
 
 module.exports = broadcast;
