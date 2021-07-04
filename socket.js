@@ -20,7 +20,7 @@ io.on(`connection`, async (socket) => {
     socket.emit(`handshake`)
 })
 
-const broadcast = (type, name, arg) => {
+const broadcast = (type, name, arg, price) => {
     if (type === `clearall`) io.sockets.emit(`clearall`);
     io.sockets.emit(type, { name, arg, price });
 }
