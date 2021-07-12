@@ -55,7 +55,7 @@ router.get('/cancel', (req, res) => res.send('Cancelled'));
 router.post(`/`, async (req, res) => {
     if (!req.body.fromname || !req.body.prioritymessage || !req.body.amount) return res.json({ errors: `Please fill the required fields` });
     const amount = parseInt(req.body.amount)
-    if (!amount >= 3) return res.json({ errors: `Below minimum amount.` })
+    if (amount <= 3) return res.json({ errors: `Below minimum amount.` })
     if (req.body.currency === `paypal`) {
         const payment = {
             intent: "sale",
@@ -85,7 +85,7 @@ router.post(`/`, async (req, res) => {
         };
         paypal.payment.create(payment, (error, payment) => {
             if (error) {
-                throw error;
+                return console.log(error);
             } else {
                 Transaction.findOne({ transactionID:  payment.id}).then(transaction => {
                     if (transaction) return log(`red`, `Transaction already exists.`)
