@@ -201,27 +201,22 @@ router.post(`/success/crypto`, async (req, res) => {
     if (error && error) return res.json({errors: error});
     if (!isValid) return res.send(`Hmac calculation does not match`);
 
-    if (req.body.status_text === `Complete`) {
-        Transaction.findOne({
-            transactionID: req.body.custom
-        }).then(transaction => {
-            if (!transaction) return res.status(404).send(`Error: Transaction does not exist`)
-            if (transaction.paid == true) return res.send(`Transaction ${req.body.custom} is already Complete`)
-            transaction.paid = true;
-            transaction.save(() => {
-                log(`green`, `Transaction "${req.body.custom}" Completed.`)
-                const embed = new Discord.MessageEmbed()
-                    .setTitle(transaction.name)
-                    .setAuthor(`Priority Message for ${transaction.price} USD (CRYPTO)`, `https://lightwarp.network/assets/img/logo.jpg`, `https://${process.env.APP_DOMAIN}/prioritymessage`)
-                    .setDescription(transaction.arg)
-                client.channels.cache.get(process.env.MESSAGE_CHANNEL_ID).send(embed);
-                socket(`prioritymessage`, transaction.name, transaction.arg, transaction.price);
-            })
+    Transaction.findOne({
+        transactionID: req.body.custom
+    }).then(transaction => {
+        if (!transaction) return res.status(404).send(`Error: Transaction does not exist`)
+        if (transaction.paid == true) return res.send(`Transaction ${req.body.custom} is already Complete`)
+        transaction.paid = true;
+        transaction.save(() => {
+            log(`green`, `Transaction "${req.body.custom}" Completed.`)
+            const embed = new Discord.MessageEmbed()
+                .setTitle(transaction.name)
+                .setAuthor(`Priority Message for ${transaction.price} USD (CRYPTO)`, `https://lightwarp.network/assets/img/logo.jpg`, `https://${process.env.APP_DOMAIN}/prioritymessage`)
+                .setDescription(transaction.arg)
+            client.channels.cache.get(process.env.MESSAGE_CHANNEL_ID).send(embed);
+            socket(`prioritymessage`, transaction.name, transaction.arg, transaction.price);
         })
-    } else {
-        res.send(`Incomplete`)
-        log(`red`, `Incomplete`)
-    }
+    })
 })
 
 client.login(process.env.DISCORD_TOKEN);
