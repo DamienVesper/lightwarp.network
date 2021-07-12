@@ -55,7 +55,8 @@ router.get('/cancel', (req, res) => res.send('Cancelled'));
 router.post(`/`, async (req, res) => {
     if (!req.body.fromname || !req.body.prioritymessage || !req.body.amount) return res.json({ errors: `Please fill the required fields` });
     const amount = parseInt(req.body.amount)
-    if (amount <= 3) return res.json({ errors: `Below minimum amount.` })
+    if (isNaN(amount)) return res.json({ errors: `Amount must be Integer.` })
+    if (amount >= 3) return res.json({ errors: `Below minimum amount.` })
     if (req.body.currency === `paypal`) {
         const payment = {
             intent: "sale",
@@ -184,7 +185,7 @@ router.get(`/success/paypal`, async (req, res) => {
 
 router.post(`/success/crypto`, async (req, res) => {
     let isValid, error;
-    
+
     if (
         !req.get(`HMAC`) ||
         !req.body.ipn_mode ||
